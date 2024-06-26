@@ -1,9 +1,8 @@
 local M = {}
 
-function M.setup(opts)
-	require("trouble.config").setup(opts)
+function M.setup(_)
 	vim.api.nvim_create_user_command("Curl", function()
-		require("langeoys.utils.rest").open_curl_tab()
+		require("curl.api").open_curl_tab()
 	end, {})
 end
 
