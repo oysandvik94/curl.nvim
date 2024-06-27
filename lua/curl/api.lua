@@ -47,13 +47,25 @@ M.open_curl_tab = function()
 	)
 end
 
+local remove_trailing_forwardslash = function(lines)
+	local cleaned_lines = {}
+	for _, line in ipairs(lines) do
+		local cleaned_line = line:gsub("%s*\\%s*$", "")
+		table.insert(cleaned_lines, cleaned_line)
+	end
+
+	return cleaned_lines
+end
+
 local get_curl_command = function()
 	local left_buf = vim.api.nvim_get_current_buf()
 	-- todo: this gets all lines. get current section or selection instead
 	-- maybe search until next instance of curl, i.e. 'y/curl'
 	local lines = vim.api.nvim_buf_get_lines(left_buf, 0, -1, false)
 
-	local curl_command = table.concat(lines, " ")
+	local cleaned_lines = remove_trailing_forwardslash(lines)
+
+	local curl_command = table.concat(cleaned_lines, " ")
 	curl_command = curl_command .. " -s -S"
 
 	cache.save_commands_to_cache(lines)
