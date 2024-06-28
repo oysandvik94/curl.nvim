@@ -69,7 +69,7 @@ M.parse_curl_command = function(lines)
 
 	local result = ""
 	for i = first_line, last_line do
-		result = result .. cleaned_lines[i]
+		result = result .. " " .. cleaned_lines[i]
 	end
 
 	result = result .. " -s -S"
