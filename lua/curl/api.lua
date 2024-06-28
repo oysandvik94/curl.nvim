@@ -1,26 +1,17 @@
 local M = {}
 
+local cache = require("curl.cache")
+local parser = require("curl.parser")
+local buffers = require("curl.buffers")
+
 local curl_buf_name = "Curl Command"
 local output_buf_name = "Curl Output"
 
-local function find_buffer_by_name(name)
-	local buf = vim.fn.bufnr(name .. "$")
-
-	if buf == -1 then
-		buf = vim.api.nvim_create_buf(false, true)
-		vim.api.nvim_buf_set_name(buf, name)
-	end
-
-	return buf
-end
-
-local cache = require("curl.cache")
-
 M.open_curl_tab = function()
-	local curl_buffer = find_buffer_by_name(curl_buf_name)
-	vim.api.nvim_set_option_value("filetype", "curl", { buf = curl_buffer })
+	local curl_buffer = buffers.find_buffer_by_name(curl_buf_name)
+	vim.api.nvim_set_option_value("filetype", "sh", { buf = curl_buffer })
 
-	local output_buffer = find_buffer_by_name(output_buf_name)
+	local output_buffer = buffers.find_buffer_by_name(output_buf_name)
 	vim.api.nvim_set_option_value("filetype", "json", { buf = output_buffer })
 
 	vim.cmd("tabnew")
@@ -47,39 +38,25 @@ M.open_curl_tab = function()
 	)
 end
 
-local remove_trailing_forwardslash = function(lines)
-	local cleaned_lines = {}
-	for _, line in ipairs(lines) do
-		local cleaned_line = line:gsub("%s*\\%s*$", "")
-		table.insert(cleaned_lines, cleaned_line)
-	end
-
-	return cleaned_lines
-end
-
 local get_curl_command = function()
 	local left_buf = vim.api.nvim_get_current_buf()
-	-- todo: this gets all lines. get current section or selection instead
-	-- maybe search until next instance of curl, i.e. 'y/curl'
 	local lines = vim.api.nvim_buf_get_lines(left_buf, 0, -1, false)
 
-	local cleaned_lines = remove_trailing_forwardslash(lines)
-
-	local curl_command = table.concat(cleaned_lines, " ")
-	curl_command = curl_command .. " -s -S"
-
 	cache.save_commands_to_cache(lines)
-	return curl_command
+
+	local result = parser.parse_curl_command(lines)
+	result = result .. " -s -S"
+
+	return result
 end
 
--- Function to execute the curl command and display the output
 M.execute_curl = function()
 	local curl_command = get_curl_command()
 
 	local output = ""
 	local _ = vim.fn.jobstart(curl_command, {
 		on_exit = function(_, _, _)
-			local right_buf = find_buffer_by_name(output_buf_name)
+			local right_buf = buffers.find_buffer_by_name(output_buf_name)
 			if right_buf then
 				vim.api.nvim_buf_set_lines(right_buf, 0, -1, false, { output })
 				vim.api.nvim_buf_call(right_buf, function()
