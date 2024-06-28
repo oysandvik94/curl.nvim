@@ -64,16 +64,22 @@ find_forwards = function(current_pos, lines)
 	return find_forwards(next_pos, lines)
 end
 
-M.parse_curl_command = function(lines)
+M.parse_curl_command = function(cursor_pos, lines)
+	if #lines == 0 then
+		return ""
+	end
+
 	local cleaned_lines = remove_trailing_forwardslash(lines)
 
-	local cursor = vim.api.nvim_win_get_cursor(0)[1]
-	local first_line = find_backward(cursor, cleaned_lines)
-	local last_line = find_forwards(cursor, cleaned_lines)
+	local first_line = find_backward(cursor_pos, cleaned_lines)
+	local last_line = find_forwards(cursor_pos, cleaned_lines)
 
 	local result = ""
 	for i = first_line, last_line do
-		result = result .. " " .. cleaned_lines[i]
+		if i > first_line then
+			result = result .. " "
+		end
+		result = result .. cleaned_lines[i]
 	end
 
 	result = result .. " -s -S"
