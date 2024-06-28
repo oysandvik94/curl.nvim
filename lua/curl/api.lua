@@ -3,6 +3,7 @@ local M = {}
 local cache = require("curl.cache")
 local parser = require("curl.parser")
 local buffers = require("curl.buffers")
+local notify = require("curl.notifications")
 
 local curl_buf_name = "Curl Command"
 local output_buf_name = "Curl Output"
@@ -54,21 +55,34 @@ M.execute_curl = function()
 	local curl_command = get_curl_command()
 
 	local output = ""
+	local error = ""
+
+	notify.info("Running curl request")
+
 	local _ = vim.fn.jobstart(curl_command, {
 		on_exit = function(_, _, _)
 			local right_buf = buffers.find_buffer_by_name(output_buf_name)
-			if right_buf then
-				vim.api.nvim_buf_set_lines(right_buf, 0, -1, false, { output })
-				vim.api.nvim_buf_call(right_buf, function()
-					vim.cmd("%!jq '.'")
-				end)
+			if not right_buf then
+				notify.error("Could not find the output buffer, try relaunching the curl tab")
+				return
 			end
+
+			if error ~= "" then
+				notify.error("Curl failed")
+				vim.api.nvim_buf_set_lines(right_buf, 0, -1, false, { error })
+				return
+			end
+
+			vim.api.nvim_buf_set_lines(right_buf, 0, -1, false, { output })
+			vim.api.nvim_buf_call(right_buf, function()
+				vim.cmd("%!jq '.'")
+			end)
 		end,
 		on_stdout = function(_, data, _)
 			output = output .. vim.fn.join(data)
 		end,
 		on_stderr = function(_, data, _)
-			output = output .. vim.fn.join(data)
+			error = error .. vim.fn.join(data)
 		end,
 	})
 end
