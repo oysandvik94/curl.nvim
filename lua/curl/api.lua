@@ -57,8 +57,6 @@ M.execute_curl = function()
 	local output = ""
 	local error = ""
 
-	notify.info("Running curl request")
-
 	local _ = vim.fn.jobstart(curl_command, {
 		on_exit = function(_, _, _)
 			local right_buf = buffers.find_buffer_by_name(output_buf_name)
