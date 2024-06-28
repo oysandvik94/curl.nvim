@@ -18,6 +18,10 @@ find_backward = function(current_pos, lines)
 		return current_pos
 	end
 
+	if lines[current_pos]:match("^curl") ~= nil then
+		return current_pos
+	end
+
 	local next_line = lines[next_pos]
 	if next_line == nil then
 		return current_pos
