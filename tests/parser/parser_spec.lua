@@ -8,7 +8,7 @@ local function assert_commands(expected, received)
 	assert(expected_silenced == received, fail_message)
 end
 
-describe("Able to parse a buffer", function()
+describe("Able to parse simple buffer", function()
 	local parser = require("curl.parser")
 
 	it("containing zero curl command", function()
