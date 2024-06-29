@@ -45,7 +45,7 @@ local get_curl_command = function()
 
 	cache.save_commands_to_cache(lines)
 
-	local cursor_pos = vim.api.nvim_win_get_cursor(0)
+	local cursor_pos = vim.api.nvim_win_get_cursor(0)[1]
 	local result = parser.parse_curl_command(cursor_pos, lines)
 	result = result .. " -s -S"
 
