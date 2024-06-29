@@ -38,11 +38,11 @@ describe("Able to parse a buffer", function()
 			"curl https://second.com/todos/1",
 			"curl https://third.com/todos/1",
 		}
-		local cursor_pos = 2
 
-		local parsed_command = parser.parse_curl_command(cursor_pos, input_buffer)
+		for index, curl_line in ipairs(input_buffer) do
+			local parsed_command = parser.parse_curl_command(index, input_buffer)
 
-		local expected_curl_command = "curl https://second.com/todos/1"
-		assert_commands(expected_curl_command, parsed_command)
+			assert_commands(curl_line, parsed_command)
+		end
 	end)
 end)
