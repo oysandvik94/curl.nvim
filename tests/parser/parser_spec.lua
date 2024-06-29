@@ -89,3 +89,29 @@ describe("Able to parse simple buffer", function()
 		end
 	end)
 end)
+
+describe("Has feature", function()
+	it("parsing multiline commands with trailing forward slash", function()
+		local input_buffer = {
+			"curl https://first.com/todos/1",
+			"curl -X POST https://jsonplaceholder.typicode.com/posts \\",
+			"-H 'Content-Type: application/json' \\",
+			"-d \\",
+			"'{ \\",
+			'"title": "foo", \\',
+			'"body": "bar", \\',
+			'"userId": 123 \\',
+			"}'",
+			"curl https://third.com/todos/1",
+		}
+
+		-- All cursor positions in the multiline curl is valid
+		local expected_command =
+			'curl -X POST https://jsonplaceholder.typicode.com/posts -H \'Content-Type: application/json\' -d \'{ "title": "foo", "body": "bar", "userId": 123 }\''
+
+		for index = 2, 9 do
+			local parsed_command = parser.parse_curl_command(index, input_buffer)
+			assert_commands(expected_command, parsed_command)
+		end
+	end)
+end)
