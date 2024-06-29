@@ -52,4 +52,10 @@ M.get_command_buffer_and_pos = function()
 	return cursor_pos, lines
 end
 
+M.set_output_buffer_content = function(content)
+	local right_buf = get_or_create_buffer(CURL_OUTPUT_BUF_NAME)
+
+	vim.api.nvim_buf_set_lines(right_buf, 0, -1, false, content)
+end
+
 return M

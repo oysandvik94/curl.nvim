@@ -3,7 +3,8 @@ local M = {}
 local parser = require("curl.parser")
 local buffers = require("curl.buffers")
 local cache = require("curl.cache")
-local output_buffer = require("curl.output")
+local output_parser = require("curl.output_parser")
+local notify = require("curl.notifications")
 
 M.open_curl_tab = function()
 	local curl_buffer = buffers.open_curl_tab()
@@ -27,8 +28,14 @@ M.execute_curl = function()
 	local output = ""
 	local error = ""
 	local _ = vim.fn.jobstart(curl_command, {
-		on_exit = function(_, _, _)
-			output_buffer.write_output(output, error)
+		on_exit = function(_, exit_code, _)
+			if exit_code ~= 0 then
+				notify.error("Curl failed")
+				buffers.set_output_buffer_content(error)
+			end
+
+			local parsed_output = output_parser.write_output(output)
+			buffers.set_output_buffer_content(parsed_output)
 		end,
 		on_stdout = function(_, data, _)
 			output = output .. vim.fn.join(data)

@@ -1,4 +1,5 @@
 local api = require("curl.api")
+local buffers = require("lua.curl.buffers")
 local test_util = require("tests.test_util")
 
 describe("Api", function()
@@ -16,5 +17,24 @@ describe("Api", function()
 		local right_buffer = vim.api.nvim_win_get_buf(windows[2])
 		local right_name = vim.api.nvim_buf_get_name(right_buffer):match("Curl Output$")
 		assert(right_name ~= nil, "Name for right buffer was not set")
+	end)
+end)
+
+describe("Buffer", function()
+	it("should output to right buffer", function()
+		api.open_curl_tab()
+
+		local lines = {
+			"1",
+			"2",
+			"3",
+		}
+
+		buffers.set_output_buffer_content(lines)
+
+		vim.cmd("wincmd l")
+		local right_content = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+
+		test_util.assert_table_equals(lines, right_content)
 	end)
 end)
