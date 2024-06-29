@@ -34,7 +34,7 @@ M.execute_curl = function()
 				buffers.set_output_buffer_content(error)
 			end
 
-			local parsed_output = output_parser.write_output(output)
+			local parsed_output = output_parser.parse_curl_output(output)
 			buffers.set_output_buffer_content(parsed_output)
 		end,
 		on_stdout = function(_, data, _)
