@@ -9,10 +9,10 @@ local curl_buf_name = "Curl Command"
 local output_buf_name = "Curl Output"
 
 M.open_curl_tab = function()
-	local curl_buffer = buffers.find_buffer_by_name(curl_buf_name)
+	local curl_buffer = buffers.get_or_create_buffer(curl_buf_name)
 	vim.api.nvim_set_option_value("filetype", "sh", { buf = curl_buffer })
 
-	local output_buffer = buffers.find_buffer_by_name(output_buf_name)
+	local output_buffer = buffers.get_or_create_buffer(output_buf_name)
 	vim.api.nvim_set_option_value("filetype", "json", { buf = output_buffer })
 
 	vim.cmd("tabnew")
@@ -60,7 +60,7 @@ M.execute_curl = function()
 
 	local _ = vim.fn.jobstart(curl_command, {
 		on_exit = function(_, _, _)
-			local right_buf = buffers.find_buffer_by_name(output_buf_name)
+			local right_buf = buffers.get_or_create_buffer(output_buf_name)
 			if not right_buf then
 				notify.error("Could not find the output buffer, try relaunching the curl tab")
 				return
