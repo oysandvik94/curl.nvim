@@ -1,4 +1,4 @@
-local parser = require("curl.parser")
+local parser = require("lua.curl.parser")
 local test_util = require("tests.test_util")
 
 describe("Able to parse simple buffer", function()
@@ -101,6 +101,57 @@ describe("Has feature", function()
 			'curl -X POST https://jsonplaceholder.typicode.com/posts -H \'Content-Type: application/json\' -d \'{ "title": "foo", "body": "bar", "userId": 123 }\''
 
 		for index = 2, 9 do
+			local parsed_command = parser.parse_curl_command(index, input_buffer)
+			test_util.assert_commands(expected_command, parsed_command)
+		end
+	end)
+
+	it("parse json object without surrounding quotes", function()
+		local input_buffer = {
+			"curl -X POST https://jsonplaceholder.typicode.com/posts",
+			"-H 'Content-Type: application/json'",
+			"-d",
+			"{",
+			'"title": "foo",',
+			'"body": "bar",',
+			'"userId": 123',
+			"}",
+		}
+
+		local expected_command =
+			'curl -X POST https://jsonplaceholder.typicode.com/posts -H \'Content-Type: application/json\' -d \'{ "title": "foo", "body": "bar", "userId": 123 }\''
+
+		for index = 1, #input_buffer do
+			local parsed_command = parser.parse_curl_command(index, input_buffer)
+			test_util.assert_commands(expected_command, parsed_command)
+		end
+	end)
+
+	it("parse json array without surrounding quotes", function()
+		local input_buffer = {
+			"curl -X POST https://jsonplaceholder.typicode.com/posts",
+			"-H 'Content-Type: application/json'",
+			"-d",
+			"[",
+			"{",
+			'"title": "foo",',
+			'"body": "bar",',
+			'"userId": 123',
+			"},",
+			"{",
+			'"title": {',
+			'"foo": "bar"',
+			"},",
+			'"body": "bar",',
+			'"userId": 123',
+			"}",
+			"]",
+		}
+
+		local expected_command =
+			'curl -X POST https://jsonplaceholder.typicode.com/posts -H \'Content-Type: application/json\' -d \'[ { "title": "foo", "body": "bar", "userId": 123 }, { "title": { "foo": "bar" }, "body": "bar", "userId": 123 } ]\''
+
+		for index = 1, #input_buffer do
 			local parsed_command = parser.parse_curl_command(index, input_buffer)
 			test_util.assert_commands(expected_command, parsed_command)
 		end

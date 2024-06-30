@@ -1,9 +1,53 @@
 M = {}
 
+---comment
+---@param stack {}
+---@param opening_char string
+---@param closing_char string
+---@param line {}
+---@return boolean
+local function handle_stack(stack, opening_char, closing_char, line)
+	if line:sub(1, 1) == opening_char then
+		table.insert(stack, opening_char)
+	end
+
+	if line:sub(1, 1) == closing_char then
+		table.remove(stack)
+
+		if #stack == 0 then
+			return true
+		end
+	end
+
+	return false
+end
+
+---@param lines table
+---@return table
 local remove_trailing_forwardslash = function(lines)
 	local cleaned_lines = {}
+
+	local opening_json_char
+	local closing_json_char
+	local json_seperator_stack = {}
+
 	for _, line in ipairs(lines) do
 		local cleaned_line = line:gsub("%s*\\%s*$", "")
+
+		if #json_seperator_stack == 0 and cleaned_line:match("^[%[%{]") ~= nil then
+			opening_json_char = cleaned_line:sub(1, 1)
+			closing_json_char = opening_json_char == "[" and "]" or "}"
+			handle_stack(json_seperator_stack, opening_json_char, closing_json_char, cleaned_line)
+
+			cleaned_line = "'" .. cleaned_line
+		elseif #json_seperator_stack > 0 then
+			local found_json_end =
+				handle_stack(json_seperator_stack, opening_json_char, closing_json_char, cleaned_line)
+			if found_json_end then
+				cleaned_line = cleaned_line .. "'"
+			end
+		end
+
 		table.insert(cleaned_lines, cleaned_line)
 	end
 
