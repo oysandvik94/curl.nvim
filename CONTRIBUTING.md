@@ -62,3 +62,9 @@ another curl command.
 We do the same downwards.
 
 The first and last line is the boundary for the curl command.
+
+## Tests
+
+Tests can be run like this:
+
+`./test/run`
