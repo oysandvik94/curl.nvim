@@ -1,5 +1,17 @@
 M = {}
 
+local highlight_curl_command = function(start_pos, end_pos)
+	local ns_id = vim.api.nvim_create_namespace("curl_command_highlight")
+
+	for i = start_pos - 1, end_pos - 1 do -- Lua is 1-indexed, but nvim_buf_add_highlight is 0-indexed
+		vim.api.nvim_buf_add_highlight(0, ns_id, "CurlCommandHighlight", i, 0, -1)
+	end
+
+	vim.defer_fn(function()
+		vim.api.nvim_buf_clear_namespace(0, ns_id, start_pos - 1, end_pos)
+	end, 200)
+end
+
 ---comment
 ---@param stack {}
 ---@param opening_char string
@@ -120,6 +132,8 @@ M.parse_curl_command = function(cursor_pos, lines)
 
 	local first_line = find_backward(cursor_pos, cleaned_lines)
 	local last_line = find_forwards(cursor_pos, cleaned_lines)
+
+	highlight_curl_command(first_line, last_line)
 
 	local selection = {}
 	for i = first_line, last_line do
