@@ -3,7 +3,7 @@ M = {}
 M.assert_commands = function(expected, received)
 	local expected_silenced = ""
 	if #expected > 0 then
-		expected_silenced = expected .. " -s -S"
+		expected_silenced = expected .. " -sSL"
 	end
 
 	M.assert_equals(expected_silenced, received)

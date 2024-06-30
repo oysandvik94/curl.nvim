@@ -34,6 +34,10 @@ local function found_first_json_char(stack, line)
 	return #stack == 0 and line:match("^[%[%{]") ~= nil
 end
 
+local function is_commented(line)
+	return line:match("^%#") ~= nil
+end
+
 ---comment removes trailing \ character from newlines,
 ---and adds single quotes to the beginning and end of json strings if they are missing
 ---@param lines table
@@ -117,16 +121,14 @@ M.parse_curl_command = function(cursor_pos, lines)
 	local first_line = find_backward(cursor_pos, cleaned_lines)
 	local last_line = find_forwards(cursor_pos, cleaned_lines)
 
-	local result = ""
+	local selection = {}
 	for i = first_line, last_line do
-		if i > first_line then
-			result = result .. " "
+		if not is_commented(cleaned_lines[i]) then
+			table.insert(selection, cleaned_lines[i])
 		end
-		result = result .. cleaned_lines[i]
 	end
 
-	result = result .. " -s -S"
-	return result
+	return vim.fn.join(selection, " ") .. " -sSL"
 end
 
 return M
