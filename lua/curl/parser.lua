@@ -41,8 +41,7 @@ end
 local format_command_for_curl = function(lines)
 	local cleaned_lines = {}
 
-	local opening_json_char
-	local closing_json_char
+	local opening_json_char, closing_json_char
 	local json_nesting_stack = {}
 
 	for _, line in ipairs(lines) do
@@ -72,7 +71,7 @@ local find_backward
 find_backward = function(current_pos, lines)
 	local next_pos = current_pos - 1
 
-	if current_pos <= 0 then
+	if current_pos <= 1 then
 		return current_pos
 	end
 
@@ -80,18 +79,9 @@ find_backward = function(current_pos, lines)
 		return current_pos
 	end
 
-	local next_line = lines[next_pos]
-	if next_line == nil then
+	local next_line = lines[next_pos]:gsub("%s+", "")
+	if next_line == "" then
 		return current_pos
-	end
-
-	local trimmed_line = next_line:gsub("%s+", "")
-	if trimmed_line == "" then
-		return current_pos
-	end
-
-	if next_line:match("^curl") ~= nil then
-		return next_pos
 	end
 
 	return find_backward(next_pos, lines)
@@ -105,13 +95,8 @@ find_forwards = function(current_pos, lines)
 		return current_pos
 	end
 
-	local next_line = lines[next_pos]
-	if next_line == nil then
-		return current_pos
-	end
-
-	local trimmed_line = next_line:gsub("%s+", "")
-	if trimmed_line == "" then
+	local next_line = lines[next_pos]:gsub("%s+", "")
+	if next_line == "" then
 		return current_pos
 	end
 
