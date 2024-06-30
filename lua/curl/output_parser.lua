@@ -1,7 +1,7 @@
 M = {}
 
 M.parse_curl_output = function(curl_standard_out)
-	if curl_standard_out:match("^{") ~= nil then
+	if curl_standard_out:match("^[%[%{]") ~= nil then
 		local handle = io.popen("echo '" .. curl_standard_out .. "' | jq .")
 
 		if handle then
@@ -24,7 +24,7 @@ M.parse_curl_output = function(curl_standard_out)
 		local trimmed_line = trim(line)
 		split[idx] = trimmed_line
 
-		if trimmed_line:match("^{") ~= nil then
+		if trimmed_line:match("^[%[%{]") ~= nil then
 			table.remove(split, idx)
 			jsonString = line
 			break
