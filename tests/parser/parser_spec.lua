@@ -218,7 +218,7 @@ describe("Has feature", function()
 		}
 
 		local expected_command =
-			"curl -X POST https://jsonplaceholder.typicode.com/posts -H 'Content-Type: application/json' -d '[ {\"title\": \"remember me\", }]'"
+			"curl -X POST https://jsonplaceholder.typicode.com/posts -H 'Content-Type: application/json' -d '[ { \"title\": \"remember me\", }]'"
 
 		for index = 1, #input_buffer do
 			local parsed_command = parser.parse_curl_command(index, input_buffer)
