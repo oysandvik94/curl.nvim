@@ -5,15 +5,14 @@
   
 Integrate curl and jq in Neovim.
 
-https://github.com/oysandvik94/curl.nvim/assets/25078429/9c25d289-c293-41c4-9d8d-40a0e8b013ed
-
 </div>
+
+💪 curl.nvim allows you to run HTTP requests with curl from a scratchpad, and display the formatted output 💪
+
+https://github.com/oysandvik94/curl.nvim/assets/25078429/9c25d289-c293-41c4-9d8d-40a0e8b013ed
 
 > [!WARNING]  
 > This is my first plugin, and it is in early development. I will fix bugs as fast as I can. Please be patient!
-
-💪 curl.nvim allows you to run HTTP requests with curl from a scratchpad, and display the output
-formatted with jq.
 
 The scratch buffer also persists after closing Neovim, persisting based on the current working
 directory.
@@ -25,7 +24,7 @@ still using the knowledge of curl you already have.
 
 However, there are a few quality of life features:
 
-✨ JSON bodies do not have to be wrapped in quotes, making it easier to format JSON with JQ (va{:!jq)
+- ✨ JSON bodies do not have to be wrapped in quotes, making it easier to format JSON with JQ (va{:!jq)
 
 <details>
 <summary>See example</summary>
@@ -42,8 +41,8 @@ curl -X POST https://jsonplaceholder.typicode.com/posts
 
 </details>
 
-✨ You dont need a trailing \, but it wont matter if they are there, making it easier to copy-paste
-requests
+- ✨ You dont need a trailing \\, but it wont matter if they are there, making it easier to copy-paste
+  requests
 
 <details>
 <summary>See example</summary>
@@ -56,8 +55,8 @@ curl -X POST https://jsonplaceholder.typicode.com/posts \
 
 </details>
 
-✨ Headers and parts of the body can be commented out using '#', making ad-hoc experimenting with
-requests easier
+- ✨ Headers and parts of the body can be commented out using '#', making ad-hoc experimenting with
+  requests easier
 
 <details>
 <summary>See example</summary>
@@ -143,7 +142,6 @@ The plugin also exposes this lua api:
 
 <details>
 <summary>See lua api</summary>
-</details>
 
 ```lua
 local curl = require('curl')
@@ -156,6 +154,8 @@ curl.close_curl_tab()
 curl.execute_curl()
 
 ```
+
+</details>
 
 ## Future plans
 
