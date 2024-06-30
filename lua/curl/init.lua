@@ -1,6 +1,6 @@
 local M = {}
 
-function M.setup(_)
+function M.setup(opts)
 	vim.api.nvim_create_user_command("CurlOpen", function()
 		require("curl.api").open_curl_tab()
 	end, { desc = "Open tab for curl.nvim" })
@@ -8,6 +8,8 @@ function M.setup(_)
 	vim.api.nvim_create_user_command("CurlClose", function()
 		require("curl.api").close_curl_tab()
 	end, { desc = "Close tab for curl.nvim" })
+
+	require("lua.curl.config").setup(opts)
 end
 
 return setmetatable(M, {
