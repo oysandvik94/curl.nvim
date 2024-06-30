@@ -5,6 +5,8 @@
   
 Integrate curl and jq in Neovim.
 
+https://github.com/oysandvik94/curl.nvim/assets/25078429/9c25d289-c293-41c4-9d8d-40a0e8b013ed
+
 </div>
 
 ## Installation and requirements
