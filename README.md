@@ -1,6 +1,11 @@
-# curl.nvim
-
+<div align="center">
+<img src="https://github.com/oysandvik94/curl.nvim/assets/25078429/65ad4dd4-cb7a-4ef9-a503-ff6693129efb" data-canonical-src="https://github.com/oysandvik94/curl.nvim/assets/25078429/65ad4dd4-cb7a-4ef9-a503-ff6693129efb" width="300" height="300" />
+  
+  # curl.nvim
+  
 Integrate curl and jq in Neovim.
+
+</div>
 
 ## Installation and requirements
 
