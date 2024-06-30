@@ -28,14 +28,12 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     needs: tests
-    if: ${{ github.ref == 'refs/heads/main' && github.repository_owner == 'LazyVim' }}
     steps:
       - uses: actions/checkout@v4
       - name: panvimdoc
         uses: kdheepak/panvimdoc@main
         with:
-          vimdoc: LazyVim
-          version: "Neovim >= 0.9.0"
+          vimdoc: curl.nvim
           demojify: true
           treesitter: true
       - name: Push changes
