@@ -142,6 +142,10 @@ M.parse_curl_command = function(cursor_pos, lines)
 		end
 	end
 
+	if selection[1]:match("^%s*curl") == nil then
+		return ""
+	end
+
 	return vim.fn.join(selection, " ") .. " -sSL"
 end
 
