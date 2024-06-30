@@ -31,6 +31,11 @@ M.execute_curl = function()
 
 	local curl_command = parser.parse_curl_command(cursor_pos, lines)
 
+	if curl_command == "" then
+		notify.error("No curl command found under the cursor")
+		return
+	end
+
 	local output = ""
 	local error = ""
 	local _ = vim.fn.jobstart(curl_command, {
