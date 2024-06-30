@@ -9,6 +9,10 @@ function M.setup(opts)
 		require("curl.api").close_curl_tab()
 	end, { desc = "Close tab for curl.nvim" })
 
+	vim.api.nvim_set_hl(0, "CurlCommandHighlight", {
+		link = "Visual",
+	})
+
 	require("curl.config").setup(opts)
 end
 
