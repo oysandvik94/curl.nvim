@@ -5,7 +5,7 @@ local buffers = require("curl.buffers")
 local cache = require("curl.cache")
 local output_parser = require("curl.output_parser")
 local notify = require("curl.notifications")
-local config = require("lua.curl.config")
+local config = require("curl.config")
 
 M.open_curl_tab = function()
 	local curl_buffer = buffers.open_curl_tab()

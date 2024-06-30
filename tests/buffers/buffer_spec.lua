@@ -1,5 +1,5 @@
 local api = require("curl.api")
-local buffers = require("lua.curl.buffers")
+local buffers = require("curl.buffers")
 local test_util = require("tests.test_util")
 
 describe("Api", function()

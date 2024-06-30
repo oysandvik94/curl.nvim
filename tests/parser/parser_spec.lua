@@ -1,4 +1,4 @@
-local parser = require("lua.curl.parser")
+local parser = require("curl.parser")
 local test_util = require("tests.test_util")
 
 describe("Able to parse simple buffer", function()

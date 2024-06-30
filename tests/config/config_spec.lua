@@ -1,5 +1,5 @@
 local curl = require("curl")
-local config = require("lua.curl.config")
+local config = require("curl.config")
 local test_util = require("tests.test_util")
 
 describe("Config", function()
