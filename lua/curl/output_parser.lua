@@ -30,42 +30,48 @@ local function run_jq(unformatted_json)
 	return result
 end
 
+local function trim(s)
+	local from = s:match("^%s*()")
+	return from > #s and "" or s:match(".*%S", from)
+end
+
+local function is_json_start(line)
+	return line:match("^[%[%{]") ~= nil
+end
+
+local function extract_json(output_lines)
+	local header_lines = {}
+	local json_string = nil
+
+	for _, line in ipairs(output_lines) do
+		local trimmed_line = trim(line)
+		if is_json_start(trimmed_line) then
+			json_string = trimmed_line
+			break
+		end
+		table.insert(header_lines, trimmed_line)
+	end
+
+	return header_lines, json_string
+end
+
+---
 ---@param curl_standard_out string
 ---@return table
 M.parse_curl_output = function(curl_standard_out)
-	if curl_standard_out:match("^[%[%{]") ~= nil then
+	if is_json_start(curl_standard_out) then
 		return run_jq(curl_standard_out)
 	end
 
-	local function trim(s)
-		local from = s:match("^%s*()")
-		return from > #s and "" or s:match(".*%S", from)
+	local output_table = vim.split(curl_standard_out, "\r")
+	local header_lines, json_string = extract_json(output_table)
+
+	if json_string == nil then
+		return output_table
 	end
 
-	local jsonString = curl_standard_out
-	local split = vim.split(curl_standard_out, "\r")
-	for idx, line in ipairs(split) do
-		local trimmed_line = trim(line)
-		split[idx] = trimmed_line
-
-		if trimmed_line:match("^[%[%{]") ~= nil then
-			table.remove(split, idx)
-			jsonString = line
-			break
-		end
-	end
-
-	local handle = io.popen("echo '" .. jsonString .. "' | jq .")
-
-	local json_lines = {}
-	if handle then
-		local result = handle:read("*a")
-		handle:close()
-
-		json_lines = vim.split(result, "\n")
-	end
-
-	table.move(json_lines, 1, #json_lines, #split + 1, split)
-	return split
+	local json_lines = run_jq(json_string)
+	table.move(json_lines, 1, #json_lines, #header_lines + 1, header_lines)
+	return header_lines
 end
 return M
