@@ -18,6 +18,42 @@ describe("Api", function()
 		local right_name = vim.api.nvim_buf_get_name(right_buffer):match("Curl Output$")
 		assert(right_name ~= nil, "Name for right buffer was not set")
 	end)
+
+	it("should not open multiple tabs", function()
+		api.open_curl_tab()
+		local tabs_before = vim.api.nvim_list_tabpages()
+		api.open_curl_tab()
+		local tabs_after = vim.api.nvim_list_tabpages()
+
+		assert(#tabs_before == #tabs_after, "Should not open new tab")
+	end)
+
+	it("should go to tab when called twice", function()
+		api.open_curl_tab()
+		vim.cmd("tabnew")
+
+		local tabs_before = vim.api.nvim_list_tabpages()
+		api.open_curl_tab()
+		local tabs_after = vim.api.nvim_list_tabpages()
+		assert(#tabs_before == #tabs_after, "Should go to tab instead of opening new one")
+
+		local current_tab = vim.api.nvim_get_current_tabpage()
+		local windows = vim.api.nvim_tabpage_list_wins(current_tab)
+		local left_buf = vim.api.nvim_win_get_buf(windows[1])
+		local left_name = vim.api.nvim_buf_get_name(left_buf):match("Curl Command$")
+		assert(left_name ~= nil, "Left buf in curl tab should be active")
+	end)
+
+	it("should close correct tab", function()
+		api.open_curl_tab()
+		api.close_curl_tab()
+
+		local current_tab = vim.api.nvim_get_current_tabpage()
+		local windows = vim.api.nvim_tabpage_list_wins(current_tab)
+		local left_buf = vim.api.nvim_win_get_buf(windows[1])
+		local left_name = vim.api.nvim_buf_get_name(left_buf):match("Curl Command$")
+		assert(left_name == nil, "Left buf in curl tab should be closed")
+	end)
 end)
 
 describe("Buffer", function()

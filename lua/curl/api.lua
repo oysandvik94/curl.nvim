@@ -18,6 +18,10 @@ M.open_curl_tab = function()
 	)
 end
 
+M.close_curl_tab = function()
+	buffers.close_curl_tab()
+end
+
 M.execute_curl = function()
 	local cursor_pos, lines = buffers.get_command_buffer_and_pos()
 	-- todo: cache on insert instead

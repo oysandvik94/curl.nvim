@@ -19,7 +19,27 @@ M.get_or_create_buffer = function(name)
 	get_or_create_buffer(name)
 end
 
+local function open_curl_tab_if_created()
+	for _, tab in ipairs(vim.api.nvim_list_tabpages()) do
+		if pcall(function()
+			vim.api.nvim_tabpage_get_var(tab, "id")
+		end) then
+			if vim.api.nvim_tabpage_get_var(tab, "id") == "curl.nvim" then
+				vim.api.nvim_set_current_tabpage(tab)
+				vim.api.nvim_set_current_win(vim.api.nvim_tabpage_get_win(tab))
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
 M.open_curl_tab = function()
+	if open_curl_tab_if_created() then
+		return 0
+	end
+
 	local curl_buffer = get_or_create_buffer(CURL_COMMAND_BUF_NAME)
 	vim.api.nvim_set_option_value("filetype", "sh", { buf = curl_buffer })
 
@@ -27,6 +47,7 @@ M.open_curl_tab = function()
 	vim.api.nvim_set_option_value("filetype", "json", { buf = output_buffer })
 
 	vim.cmd("tabnew")
+	vim.api.nvim_tabpage_set_var(0, "id", "curl.nvim")
 	vim.api.nvim_win_set_buf(0, curl_buffer)
 
 	local cached_commands = cache.load_cached_commands()
@@ -41,6 +62,13 @@ M.open_curl_tab = function()
 
 	vim.cmd("wincmd h")
 	return curl_buffer
+end
+
+M.close_curl_tab = function()
+	local buf_name = vim.api.nvim_buf_get_name(0)
+	if buf_name:match(CURL_COMMAND_BUF_NAME .. "$") or buf_name:match(CURL_OUTPUT_BUF_NAME .. "$") then
+		vim.cmd("tabc")
+	end
 end
 
 M.get_command_buffer_and_pos = function()
