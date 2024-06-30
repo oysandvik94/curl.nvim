@@ -9,7 +9,6 @@ describe("Output from curl", function()
 			"{",
 			'  "test": 2',
 			"}",
-			"",
 		}
 
 		test_util.assert_table_equals(expected, output)
@@ -72,5 +71,14 @@ describe("Output from curl", function()
 		local output = output_parser.parse_curl_output(input)
 
 		test_util.assert_table_equals(expected, output)
+	end)
+
+	it("can parse large command", function()
+		local Path = require("plenary.path")
+		local curl_output = Path:new("tests/parser/big.json"):read()
+
+		local parsed_output = output_parser.parse_curl_output(curl_output)
+
+		assert(#parsed_output == 12657)
 	end)
 end)

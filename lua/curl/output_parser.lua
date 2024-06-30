@@ -1,16 +1,40 @@
 M = {}
 
+local Job = require("plenary.job")
+local notify = require("curl.notifications")
+
+---comment Run jq through plenary
+---@param unformatted_json string
+---@return table
+local function run_jq(unformatted_json)
+	local result = {}
+
+	Job:new({
+		command = "jq",
+		args = { "." },
+		writer = unformatted_json,
+		on_stdout = function(_, line)
+			table.insert(result, line)
+		end,
+		on_exit = function(_, return_val)
+			if return_val ~= 0 then
+				vim.schedule(function()
+					notify.error("Failed to parse JSON")
+				end)
+
+				result = { unformatted_json }
+			end
+		end,
+	}):sync()
+
+	return result
+end
+
+---@param curl_standard_out string
+---@return table
 M.parse_curl_output = function(curl_standard_out)
 	if curl_standard_out:match("^[%[%{]") ~= nil then
-		local handle = io.popen("echo '" .. curl_standard_out .. "' | jq .")
-
-		if handle then
-			local result = handle:read("*a")
-			handle:close()
-
-			return vim.split(result, "\n")
-		end
-		return
+		return run_jq(curl_standard_out)
 	end
 
 	local function trim(s)
