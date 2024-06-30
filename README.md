@@ -10,7 +10,7 @@
 https://github.com/oysandvik94/curl.nvim/assets/25078429/9c25d289-c293-41c4-9d8d-40a0e8b013ed
 
 > [!WARNING]  
-> This is my first plugin, and it is in early development. I will fix bugs as fast as I can. Please be patient!
+> This is my first plugin, and it is in early development. I will fix bugs as fast as I can. Please be patient! Bug reports are very welcome
 
 # Features
 
