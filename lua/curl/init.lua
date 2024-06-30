@@ -9,7 +9,7 @@ function M.setup(opts)
 		require("curl.api").close_curl_tab()
 	end, { desc = "Close tab for curl.nvim" })
 
-	require("lua.curl.config").setup(opts)
+	require("curl.config").setup(opts)
 end
 
 return setmetatable(M, {

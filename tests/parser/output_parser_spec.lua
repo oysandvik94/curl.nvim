@@ -1,4 +1,4 @@
-local output_parser = require("lua.curl.output_parser")
+local output_parser = require("curl.output_parser")
 local test_util = require("tests.test_util")
 
 describe("Output from curl", function()
