@@ -1,6 +1,6 @@
 ---@class curl_config
 local default_config = {
-	---@type table<'execute_curl', false|string>
+	---@type table<'execute_curl', string>
 	mappings = {
 		execute_curl = "<CR>",
 	},
