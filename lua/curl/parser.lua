@@ -47,7 +47,7 @@ local function found_first_json_char(stack, line)
 end
 
 local function is_commented(line)
-	return line:match("^%#") ~= nil
+	return line:match("^%s*%#") ~= nil
 end
 
 ---comment removes trailing \ character from newlines,

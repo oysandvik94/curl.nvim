@@ -190,14 +190,35 @@ describe("Has feature", function()
 			"-H 'Content-Type: application/json'",
 			"-d",
 			"{",
-			'"title": "foo",',
-			'#"body": "bar",',
-			'"userId": 123',
+			'  "title": "foo",',
+			'  #"body": "bar",',
+			'  "userId": 123',
 			"}",
 		}
 
 		local expected_command =
-			'curl -X POST https://jsonplaceholder.typicode.com/posts -H \'Content-Type: application/json\' -d \'{ "title": "foo", "userId": 123 }\''
+			'curl -X POST https://jsonplaceholder.typicode.com/posts -H \'Content-Type: application/json\' -d \'{   "title": "foo",   "userId": 123 }\''
+
+		for index = 1, #input_buffer do
+			local parsed_command = parser.parse_curl_command(index, input_buffer)
+			test_util.assert_commands(expected_command, parsed_command)
+		end
+	end)
+
+	it("not bug out on comment", function()
+		local input_buffer = {
+			"curl -X POST https://jsonplaceholder.typicode.com/posts",
+			"-H 'Content-Type: application/json'",
+			"-d",
+			"[",
+			"{",
+			'"title": "remember me",',
+			'# "title": "now try this"',
+			"}]",
+		}
+
+		local expected_command =
+			"curl -X POST https://jsonplaceholder.typicode.com/posts -H 'Content-Type: application/json' -d '[ {\"title\": \"remember me\", }]'"
 
 		for index = 1, #input_buffer do
 			local parsed_command = parser.parse_curl_command(index, input_buffer)
