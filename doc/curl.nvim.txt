@@ -74,6 +74,23 @@ See example ~
     }
 <
 
+- Basic auth and bearer tokens work, and can be retrieved from environment variables
+
+
+  [!CAUTION] The command scratch buffer is stored in plaintext in your Neovim
+  data directory, be careful when using literal secrets!
+See example ~
+
+>bash
+    curl -u "username:password" http://httpbin.org/basic-auth/username/password
+    
+    curl -u "username:$PASSWORD_TEST" http://httpbin.org/basic-auth/username/mypassword
+    
+    curl -X GET "https://httpbin.org/bearer" -H "accept: application/json" -H "Authorization: Bearer myrandomtoken"
+    
+    curl -X GET "https://httpbin.org/bearer" -H "accept: application/json" -H "Authorization: Bearer $TOKEN_TEST"
+<
+
 To get started, just install the plugin, run ":CurlOpen" and fire away!
 
 
