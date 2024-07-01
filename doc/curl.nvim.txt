@@ -101,10 +101,12 @@ Installation example for Lazy <https://github.com/folke/lazy.nvim>
     }
 <
 
+Toverify the installation run `:checkhealth curl`.
+
 
 CONFIGURATION                               *curl.nvim-features-configuration*
 
-Youcan configure curl.nvim by running the `curl.setup()` function, passing a
+You can configure curl.nvim by running the `curl.setup()` function, passing a
 table as the argument.
 
 Default Config ~
