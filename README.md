@@ -93,7 +93,7 @@ curl -X GET "https://httpbin.org/bearer" -H "accept: application/json" -H "Autho
 curl -X GET "https://httpbin.org/bearer" -H "accept: application/json" -H "Authorization: Bearer $TOKEN_TEST"
 ```
 
-<details>
+</details>
 
 To get started, just install the plugin, run ":CurlOpen" and fire away!
 
