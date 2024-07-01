@@ -64,11 +64,17 @@ M.open_curl_tab = function()
 	return curl_buffer
 end
 
-M.close_curl_tab = function()
-	local buf_name = vim.api.nvim_buf_get_name(0)
-	if buf_name:match(CURL_COMMAND_BUF_NAME .. "$") or buf_name:match(CURL_OUTPUT_BUF_NAME .. "$") then
-		vim.cmd("tabc")
+local close_curl_window = function(buffer)
+	local buf = get_or_create_buffer(buffer)
+	local winid = vim.fn.bufwinid(buf)
+	if winid ~= -1 then
+		vim.api.nvim_win_close(winid, true)
 	end
+end
+
+M.close_curl_tab = function()
+	close_curl_window(CURL_COMMAND_BUF_NAME)
+	close_curl_window(CURL_OUTPUT_BUF_NAME)
 end
 
 M.get_command_buffer_and_pos = function()

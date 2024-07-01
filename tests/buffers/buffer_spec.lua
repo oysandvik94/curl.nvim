@@ -54,6 +54,12 @@ describe("Api", function()
 		local left_name = vim.api.nvim_buf_get_name(left_buf):match("Curl Command$")
 		assert(left_name == nil, "Left buf in curl tab should be closed")
 	end)
+
+	it("calling close twice should not error", function()
+		api.open_curl_tab()
+		api.close_curl_tab()
+		api.close_curl_tab()
+	end)
 end)
 
 describe("Buffer", function()
