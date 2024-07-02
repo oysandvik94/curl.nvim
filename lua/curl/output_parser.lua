@@ -1,4 +1,4 @@
-M = {}
+local M = {}
 
 local Job = require("plenary.job")
 local notify = require("curl.notifications")

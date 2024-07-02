@@ -1,4 +1,4 @@
-M = {}
+local M = {}
 
 local highlight_curl_command = function(start_pos, end_pos)
 	local ns_id = vim.api.nvim_create_namespace("curl_command_highlight")

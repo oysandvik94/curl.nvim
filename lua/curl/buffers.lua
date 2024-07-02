@@ -1,4 +1,4 @@
-M = {}
+local M = {}
 local cache = require("curl.cache")
 
 CURL_COMMAND_BUF_NAME = "Curl Command"

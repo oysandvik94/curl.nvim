@@ -1,5 +1,6 @@
 local M = {}
 local Path = require("plenary.path")
+local Config = require("curl.config")
 
 local function get_cache_file()
 	local workspace_path = vim.fn.getcwd()
