@@ -1,4 +1,4 @@
-M = {}
+local M = {}
 
 M.assert_commands = function(expected, received)
 	local expected_silenced = ""

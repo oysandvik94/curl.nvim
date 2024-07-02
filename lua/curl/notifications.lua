@@ -1,4 +1,4 @@
-M = {}
+local M = {}
 
 local standard_opts = { timeout = 1, title = "curl.nvim" }
 
