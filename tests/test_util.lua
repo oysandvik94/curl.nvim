@@ -9,7 +9,7 @@ M.assert_commands = function(expected, received)
 	M.assert_equals(expected_silenced, received)
 end
 
-M.assert_equals = function(expected, received)
+M.assert_equals = function(expected, received, message)
 	local _, err = pcall(function()
 		assert(expected == received)
 	end)
@@ -20,6 +20,7 @@ M.assert_equals = function(expected, received)
 		vim.print(expected)
 		vim.print("Got:")
 		vim.print(received)
+		vim.print(message)
 		assert(false)
 	end
 end

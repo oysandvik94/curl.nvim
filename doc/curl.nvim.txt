@@ -3,98 +3,35 @@
 ==============================================================================
 Table of Contents                                *curl.nvim-table-of-contents*
 
-1. Features                                               |curl.nvim-features|
-  - Installation and requirements|curl.nvim-features-installation-and-requirements|
-  - Configuration                           |curl.nvim-features-configuration|
-  - Usage                                           |curl.nvim-features-usage|
-  - Future plans                             |curl.nvim-features-future-plans|
-  - Alternatives                             |curl.nvim-features-alternatives|
-  - Contributing                             |curl.nvim-features-contributing|
+  - Installation and requirements    |curl.nvim-installation-and-requirements|
+  - Configuration                                    |curl.nvim-configuration|
+  - Usage                                                    |curl.nvim-usage|
+  - Features                                              |curl.nvim-features|
+  - Persistence                                        |curl.nvim-persistence|
+  - Future plans                                      |curl.nvim-future-plans|
+  - Alternatives                                      |curl.nvim-alternatives|
+  - Contributing                                      |curl.nvim-contributing|
 
 
 https://github.com/oysandvik94/curl.nvim/assets/25078429/9c25d289-c293-41c4-9d8d-40a0e8b013ed
 
-
-  [!WARNING] Thisis my first plugin, and it is in early development. I will fix
-  bugs as fast as I can. Please be patient! Bug reports are very welcome
-
-==============================================================================
-1. Features                                               *curl.nvim-features*
-
-curl.nvim allows you to run HTTP requests with curl from a scratchpad, and
+curl.nvimallows you to run HTTP requests with curl from a scratchpad, and
 display the formatted output
 
-The scratch buffer also persists after closing Neovim, persisting based on the
-current working directory.
+The scratch buffer can be persisted on a per-directory basis, globally, or in
+named files.
 
 The plugin aims to be 100% compatible with curl; if a curl command can execute
 in your shell, you will be able to paste it in to the scratch buffer and run
 it. Because of this, the plugin attempts to get the balance of being ergonomic
 and convenient, while still using the knowledge of curl you already have.
 
-However, there are a few quality of life features:
-
-- JSON bodies do not have to be wrapped in quotes, making it easier to format JSON with JQ (va{:!jq)
-
-See example ~
-
->bash
-    curl -X POST https://jsonplaceholder.typicode.com/posts
-    -H 'Content-Type: application/json'
-    -d
-    {
-      "id": 2
-      "title": "now try this"
-    }
-<
-
-- You dont need a trailing \, but it wont matter if they are there, making it easier to copy-paste
-    requests
-
-See example ~
-
->bash
-    curl -X POST https://jsonplaceholder.typicode.com/posts \
-    -H 'Content-Type: application/json' \
-    -d '{"title": "now try this"}'
-<
-
-- Headers and parts of the body can be commented out using '#', making ad-hoc experimenting with
-    requests easier
-
-See example ~
-
->bash
-    curl -X POST https://jsonplaceholder.typicode.com/posts
-    -H 'Content-Type: application/json'
-    -d
-    {
-      # "title": "remember me"
-      "title": "now try this"
-    }
-<
-
-- Basic auth and bearer tokens work, and can be retrieved from environment variables
+However, there are a few quality of life features enabled in the scratch
+buffer, so that you dont have to write out curl commands as if they were valid
+bash.
 
 
-  [!CAUTION] The command scratch buffer is stored in plaintext in your Neovim
-  data directory, be careful when using literal secrets!
-See example ~
-
->bash
-    curl -u "username:password" http://httpbin.org/basic-auth/username/password
-    
-    curl -u "username:$PASSWORD_TEST" http://httpbin.org/basic-auth/username/mypassword
-    
-    curl -X GET "https://httpbin.org/bearer" -H "accept: application/json" -H "Authorization: Bearer myrandomtoken"
-    
-    curl -X GET "https://httpbin.org/bearer" -H "accept: application/json" -H "Authorization: Bearer $TOKEN_TEST"
-<
-
-To get started, just install the plugin, run ":CurlOpen" and fire away!
-
-
-INSTALLATION AND REQUIREMENTS*curl.nvim-features-installation-and-requirements*
+INSTALLATION AND REQUIREMENTS        *curl.nvim-installation-and-requirements*
 
 The plugin requires you to have curl on your system, which you most likely
 have.
@@ -121,7 +58,7 @@ Installation example for Lazy <https://github.com/folke/lazy.nvim>
 Toverify the installation run `:checkhealth curl`.
 
 
-CONFIGURATION                               *curl.nvim-features-configuration*
+CONFIGURATION                                        *curl.nvim-configuration*
 
 You can configure curl.nvim by running the `curl.setup()` function, passing a
 table as the argument.
@@ -139,16 +76,31 @@ Default Config ~
 <
 
 
-USAGE                                               *curl.nvim-features-usage*
+USAGE                                                        *curl.nvim-usage*
 
-You can either open or close curl.nvim with the usercommands:
+You can open curl.nvim in three ways:
 
 >vim
+    " A buffer that is scoped to the current working directory
     :CurlOpen
-    :CurlClose
+    
+    " A global buffer that will be the same for all Neovim instances
+    :CurlOpen global
+    
+    " A buffer with a custom name that can be opened from any Neovim instance
+    :CurlOpen custom {any_name}
 <
 
-CurlOpen will open a new tab containing two buffers split vertically.
+or using the lua api:
+
+>lua
+    require("curl").open_curl_tab()
+    require("curl").open_global_tab()
+    require("curl").open_custom_tab("my_curls")
+<
+
+Any of these commands will open a new tab containing two buffers split
+vertically.
 
 In the left buffer, you can paste or write curl commands, and by pressing
 Enter, the command will execute, and the output will be shown and formatted in
@@ -157,7 +109,125 @@ the rightmost buffer.
 If you wish, you can select the text in the right buffer, and filter it using
 jq, i.e. `ggVG! jq '{query goes here}'`
 
-See examples in the introduction for how you can format your curl requests.
+See examples under Features <README#✨Features> for more information
+
+
+FEATURES                                                  *curl.nvim-features*
+
+
+FORMATTING ~
+
+**JSON bodies do not have to be wrapped in quotes, making it easier to format
+JSON with JQ (va{:!jq)**
+
+See example ~
+
+>bash
+    curl -X POST https://jsonplaceholder.typicode.com/posts
+    -H 'Content-Type: application/json'
+    -d
+    {
+      "id": 2
+      "title": "now try this"
+    }
+<
+
+**You dont need a trailing \, but it wont matter if they are there, making it
+easier to copy-paste requests**
+
+See example ~
+
+>bash
+    curl -X POST https://jsonplaceholder.typicode.com/posts \
+    -H 'Content-Type: application/json' \
+    -d '{"title": "now try this"}'
+<
+
+**Headers and/or parts of the body can be commented out using ‘#’, making
+ad-hoc experimenting with requests easier**
+
+See example ~
+
+>bash
+    curl -X POST https://jsonplaceholder.typicode.com/posts
+    -H 'Content-Type: application/json'
+    -d
+    {
+      # "title": "remember me"
+      "title": "now try this"
+    }
+<
+
+
+HEADERS ~
+
+Basic auth and bearer tokens work, and can be retrieved from environment
+variables
+
+
+  [!CAUTION] The command scratch buffer is stored in plaintext in your Neovim
+  data directory, be careful when using literal secrets!
+See example ~
+
+>bash
+    curl -u "username:password" http://httpbin.org/basic-auth/username/password
+    
+    curl -u "username:$PASSWORD_TEST" http://httpbin.org/basic-auth/username/mypassword
+    
+    curl -X GET "https://httpbin.org/bearer" -H "accept: application/json" -H "Authorization: Bearer myrandomtoken"
+    
+    curl -X GET "https://httpbin.org/bearer" -H "accept: application/json" -H "Authorization: Bearer $TOKEN_TEST"
+<
+
+To get started, just install the plugin, run ":CurlOpen" and fire away!
+
+
+PERSISTENCE                                            *curl.nvim-persistence*
+
+There are multiple ways to work with the scratch buffers, so you can tailor it
+to how you want to work.
+
+
+PER DIRECTORY ~
+
+Running `:CurlOpen` or `require("curl").open_curl_tab()` will open a command
+buffer that is tied to your current working directory. If you open neovim in a
+different directory, a different set of commands will be shown.
+
+If you treat directories as "projects", and always open neovim in the root of
+your project directories, then this option might be useful for you.
+
+
+GLOBAL BUFFERS ~
+
+If you want your curl commands to always be available, regardless of where you
+launch Neovim from, use the global option.
+
+>vim
+    :CurlOpen global
+<
+
+>lua
+    require("curl").open_global_tab()
+<
+
+
+CUSTOM BUFFERS ~
+
+If you want more control, or would like to organize your curl commands in
+logical collections, you can use the custom option to give names to your
+collections.
+
+Next time you run `CurlOpen` with that given names, you will find your commands
+again.
+
+>vim
+    :CurlOpen custom mycoolcurls
+<
+
+>lua
+    require("curl").open_custom_tab("mycoolcurls")
+<
 
 
 LUA API ~
@@ -169,7 +239,12 @@ See lua api ~
 >lua
     local curl = require('curl')
     
+    -- See ### Persistence under ## Features
     curl.open_curl_tab()
+    curl.open_global_tab()
+    curl.open_custom_tab()
+    
+    -- Close the tab containing curl buffers
     curl.close_curl_tab()
     
     -- Executes the curl command under the cursor when the command buffer is open
@@ -178,7 +253,7 @@ See lua api ~
 <
 
 
-FUTURE PLANS                                 *curl.nvim-features-future-plans*
+FUTURE PLANS                                          *curl.nvim-future-plans*
 
 Interesting features that might arrive soon:
 
@@ -189,13 +264,13 @@ Interesting features that might arrive soon:
     or multiple named scratches
 
 
-ALTERNATIVES                                 *curl.nvim-features-alternatives*
+ALTERNATIVES                                          *curl.nvim-alternatives*
 
 - rest.nvim <https://github.com/rest-nvim/rest.nvim> has a similar UI, using HTTP file syntax instead.
     This is similar to Jetbrains HTTP clien
 
 
-CONTRIBUTING                                 *curl.nvim-features-contributing*
+CONTRIBUTING                                          *curl.nvim-contributing*
 
 Would you like to contribute? Noice, read CONTRIBUTING.md <CONTRIBUTING.md>!
 
