@@ -43,6 +43,7 @@ M.execute_curl = function()
 			if exit_code ~= 0 then
 				notify.error("Curl failed")
 				buffers.set_output_buffer_content(vim.split(error, "\n"))
+				return
 			end
 
 			local parsed_output = output_parser.parse_curl_output(output)
