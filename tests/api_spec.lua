@@ -21,7 +21,6 @@ describe("Api", function()
 		vim.api.nvim_buf_set_lines(0, 0, -1, false, { curl_command })
 
 		api.execute_curl()
-		os.execute("sleep 1")
 
 		vim.cmd("wincmd l")
 		local output = vim.api.nvim_buf_get_lines(OUTPUT_BUF_ID, 0, -1, false)
