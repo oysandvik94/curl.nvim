@@ -1,25 +1,35 @@
 local M = {}
 local Path = require("plenary.path")
-local Config = require("curl.config")
 
-local function get_cache_file()
-	local workspace_path = vim.fn.getcwd()
-	local cache_dir = Path:new(vim.fn.stdpath("data")) / "curl_cache"
+---@param filename string
+---@return string
+M.load_custom_command_file = function(filename)
+	local curl_filename = filename .. ".curl"
+	local cache_dir = Path:new(vim.fn.stdpath("data")) / "curl_cache" / "custom" ---@type Path
 	cache_dir:mkdir({ parents = true, exists_ok = true })
-	return cache_dir / (vim.fn.sha256(workspace_path))
+
+	local custom_cache_dir = cache_dir / curl_filename ---@type Path
+	return custom_cache_dir:absolute()
+end
+---
+---@return string
+M.load_global_command_file = function()
+	local cache_dir = Path:new(vim.fn.stdpath("data")) / "curl_cache" ---@type Path
+	cache_dir:mkdir({ parents = true, exists_ok = true })
+
+	local global_cache_file = cache_dir / "global.curl" ---@type Path
+	return global_cache_file:absolute()
 end
 
-M.load_cached_commands = function()
-	local cache_file = get_cache_file()
-	if cache_file:exists() then
-		return cache_file:readlines()
-	end
-	return {}
-end
+---@return string
+M.load_command_file = function()
+	local workspace_path = vim.fn.getcwd()
+	local cache_dir = Path:new(vim.fn.stdpath("data")) / "curl_cache" ---@type Path
+	cache_dir:mkdir({ parents = true, exists_ok = true })
 
-M.save_commands_to_cache = function(commands)
-	local cache_file = get_cache_file()
-	cache_file:write(table.concat(commands, "\n"), "w")
+	local cwd_cache_dir = cache_dir / (vim.fn.sha256(workspace_path)) ---@type Path
+	return cwd_cache_dir:absolute()
 end
+---
 
 return M
