@@ -7,7 +7,7 @@ Table of Contents                                *curl.nvim-table-of-contents*
   - Configuration                                    |curl.nvim-configuration|
   - Usage                                                    |curl.nvim-usage|
   - Features                                              |curl.nvim-features|
-  - Persistence                                        |curl.nvim-persistence|
+  - Lua api                                                |curl.nvim-lua-api|
   - Future plans                                      |curl.nvim-future-plans|
   - Alternatives                                      |curl.nvim-alternatives|
   - Contributing                                      |curl.nvim-contributing|
@@ -109,7 +109,7 @@ the rightmost buffer.
 If you wish, you can select the text in the right buffer, and filter it using
 jq, i.e. `ggVG! jq '{query goes here}'`
 
-See examples under Features <README#✨Features> for more information
+See examples under Features <README#✨%20Features> for more information
 
 
 FEATURES                                                  *curl.nvim-features*
@@ -117,8 +117,11 @@ FEATURES                                                  *curl.nvim-features*
 
 FORMATTING ~
 
-**JSON bodies do not have to be wrapped in quotes, making it easier to format
-JSON with JQ (va{:!jq)**
+
+NO QUOTES NEEDED
+
+JSON bodies do not have to be wrapped in quotes, making it easier to format
+JSON with JQ (va{:!jq)
 
 See example ~
 
@@ -132,8 +135,11 @@ See example ~
     }
 <
 
-**You dont need a trailing \, but it wont matter if they are there, making it
-easier to copy-paste requests**
+
+NO TRAILING \
+
+You dont need a trailing \, but it wont matter if they are there, making it
+easier to copy-paste requests
 
 See example ~
 
@@ -143,8 +149,11 @@ See example ~
     -d '{"title": "now try this"}'
 <
 
-**Headers and/or parts of the body can be commented out using ‘#’, making
-ad-hoc experimenting with requests easier**
+
+COMMENT OUT LINES
+
+Headers and/or parts of the body can be commented out using '#', making ad-hoc
+experimenting with requests easier
 
 See example ~
 
@@ -179,16 +188,14 @@ See example ~
     curl -X GET "https://httpbin.org/bearer" -H "accept: application/json" -H "Authorization: Bearer $TOKEN_TEST"
 <
 
-To get started, just install the plugin, run ":CurlOpen" and fire away!
 
-
-PERSISTENCE                                            *curl.nvim-persistence*
+PERSISTENCE ~
 
 There are multiple ways to work with the scratch buffers, so you can tailor it
-to how you want to work.
+to your own workflow.
 
 
-PER DIRECTORY ~
+PER DIRECTORY
 
 Running `:CurlOpen` or `require("curl").open_curl_tab()` will open a command
 buffer that is tied to your current working directory. If you open neovim in a
@@ -198,7 +205,7 @@ If you treat directories as "projects", and always open neovim in the root of
 your project directories, then this option might be useful for you.
 
 
-GLOBAL BUFFERS ~
+GLOBAL BUFFERS
 
 If you want your curl commands to always be available, regardless of where you
 launch Neovim from, use the global option.
@@ -212,7 +219,7 @@ launch Neovim from, use the global option.
 <
 
 
-CUSTOM BUFFERS ~
+CUSTOM BUFFERS
 
 If you want more control, or would like to organize your curl commands in
 logical collections, you can use the custom option to give names to your
@@ -230,7 +237,7 @@ again.
 <
 
 
-LUA API ~
+LUA API                                                    *curl.nvim-lua-api*
 
 The plugin also exposes this lua api:
 
