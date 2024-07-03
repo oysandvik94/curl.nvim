@@ -1,5 +1,7 @@
 local M = {}
 
+local config = require("curl.config")
+
 local highlight_curl_command = function(start_pos, end_pos)
 	local ns_id = vim.api.nvim_create_namespace("curl_command_highlight")
 
@@ -146,7 +148,14 @@ M.parse_curl_command = function(cursor_pos, lines)
 		return ""
 	end
 
-	return vim.fn.join(selection, " ") .. " -sSL"
+	table.insert(selection, "-sSL")
+
+	---@for _ int, flag string in ipairs
+	for _, flag in ipairs(config.get("default_flags")) do
+		table.insert(selection, flag)
+	end
+
+	return vim.fn.join(selection, " ")
 end
 
 return M

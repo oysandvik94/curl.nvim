@@ -1,5 +1,7 @@
 ---@class curl_config
 local default_config = {
+	---@type table<string>
+	default_flags = {},
 	---@type table<'execute_curl', string>
 	mappings = {
 		execute_curl = "<CR>",

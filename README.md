@@ -57,9 +57,11 @@ You can configure curl.nvim by running the `curl.setup()` function, passing a ta
 local curl = require("curl").setup()
 
 curl.setup {
-    mappings = {
-        execute_curl = "<CR>"
-    }
+  -- Table of strings to specify default headers to be included in each request, i.e. "-i"
+  default_flags = { },
+  mappings = {
+      execute_curl = "<CR>"
+  }
 }
 ```
 
