@@ -11,15 +11,19 @@ https://github.com/oysandvik94/curl.nvim/assets/25078429/9c25d289-c293-41c4-9d8d
 
 curl.nvim allows you to run HTTP requests with curl from a scratchpad, and display the formatted output
 
-The scratch buffer can be persisted on a per-directory basis, globally, or in named files.
+- Introduces the ".curl" filetype, where pressing enter will execute a curl request under the cursor
+- Quality of life formatting features, so that writing out curl commands is a *little* less tedious
+- Output is formatted using JQ
+- Persist a collections of curl request using various methods of persistence, such as a global file,
+named files, or a file that is stored per working directory
+- It's just curl, so all the headers and auth flags you already know works
+
+See [the features section](<README#✨ Features>) for more information.
 
 The plugin aims to be 100% compatible with curl; if a curl command can execute in your shell,
 you will be able to paste it in to the scratch buffer and run it.
 Because of this, the plugin attempts to get the balance of being ergonomic and convenient, while
 still using the knowledge of curl you already have.
-
-However, there are a few quality of life features enabled in the scratch buffer, so that you
-dont have to write out curl commands as if they were valid bash.
 
 ## Installation and requirements
 
@@ -99,6 +103,13 @@ If you wish, you can select the text in the right buffer, and filter it using jq
 See examples under [Features](<README#✨ Features>) for more information
 
 ## ✨ Features
+
+### 💪 .curl filetype
+
+Opening any file with the ".curl" file extension will activate this plugins features. 
+You will get some syntax highlighting and the ability to execute curl commands from you buffer.
+Since any ".curl" file will work, you can manage your own collection instead of using the builtin
+system, and even check in files to your repository.
 
 ### 💪 Formatting
 

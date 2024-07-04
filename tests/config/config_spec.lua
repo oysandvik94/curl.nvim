@@ -27,10 +27,12 @@ describe("Config", function()
 		local mocked_jobstart = function(command, _)
 			test_util.assert_equals(curl_command .. " -sSL -i", command, "Default flag should be added")
 		end
+		local mock_pre = vim.fn.jobstart
 		vim.fn.jobstart = mocked_jobstart
 
 		api.open_curl_tab()
 		vim.api.nvim_buf_set_lines(0, 0, -1, false, { curl_command })
 		api.execute_curl()
+		vim.fn.jobstart = mock_pre
 	end)
 end)

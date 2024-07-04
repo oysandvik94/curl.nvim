@@ -4,33 +4,17 @@ local parser = require("curl.parser")
 local buffers = require("curl.buffers")
 local output_parser = require("curl.output_parser")
 local notify = require("curl.notifications")
-local config = require("curl.config")
-
-local create_execute_mapping = function(buffer)
-	local execute_mapping = config.get("mappings")["execute_curl"]
-	vim.api.nvim_buf_set_keymap(
-		buffer,
-		"n",
-		execute_mapping,
-		"<cmd>lua require('curl.api').execute_curl()<CR>",
-		{ noremap = true, silent = true }
-	)
-end
 
 M.open_custom_tab = function(custom_buf_name)
 	buffers.open_custom_curl_tab(custom_buf_name)
-	local curl_buffer = buffers.open_curl_tab()
-	create_execute_mapping(curl_buffer)
 end
 
 M.open_global_tab = function()
-	local curl_buffer = buffers.open_global_curl_tab()
-	create_execute_mapping(curl_buffer)
+	buffers.open_global_curl_tab()
 end
 
 M.open_curl_tab = function()
-	local curl_buffer = buffers.open_curl_tab()
-	create_execute_mapping(curl_buffer)
+	buffers.open_curl_tab()
 end
 
 ---comment
@@ -50,7 +34,9 @@ M.execute_curl = function()
 
 	local output = ""
 	local error = ""
-	local output_bufnr = OUTPUT_BUF_ID
+
+	local output_bufnr = buffers.open_result_buffer()
+	OUTPUT_BUF_ID = output_bufnr
 	local _ = vim.fn.jobstart(curl_command, {
 		on_exit = function(_, exit_code, _)
 			if exit_code ~= 0 then
