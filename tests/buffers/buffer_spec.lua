@@ -4,7 +4,7 @@ local test_util = require("tests.test_util")
 
 describe("Api", function()
 	after_each(function()
-		api.close_curl_tab()
+		api.close_curl_tab(true)
 	end)
 
 	it("should open correct tabs", function()
@@ -61,6 +61,20 @@ describe("Api", function()
 		api.close_curl_tab()
 		api.close_curl_tab()
 	end)
+
+	it("calling execute twice does not open buffer twice", function()
+		local mock_pre = vim.fn.jobstart
+		vim.fn.jobstart = function() end
+		api.open_curl_tab()
+		vim.api.nvim_buf_set_lines(0, 0, -1, false, { "curl test.com" })
+		api.execute_curl()
+		local before_buffer_count = #vim.api.nvim_list_wins()
+		api.execute_curl()
+		local after_buffer_count = #vim.api.nvim_list_wins()
+		test_util.assert_equals(before_buffer_count, after_buffer_count,
+			"Executing curl twice should not open output buffer twice")
+		vim.fn.jobstart = mock_pre
+	end)
 end)
 
 describe("Buffer", function()
@@ -79,5 +93,31 @@ describe("Buffer", function()
 		local right_content = vim.api.nvim_buf_get_lines(0, 0, -1, false)
 
 		test_util.assert_table_equals(lines, right_content)
+	end)
+
+	it("multiple opens should switch buffer", function()
+		api.close_curl_tab()
+		local inital_tabs = vim.api.nvim_list_tabpages()
+		api.open_curl_tab()
+		local first_tabs = vim.api.nvim_list_tabpages()
+		test_util.assert_equals(#inital_tabs + 1, #first_tabs, "Should only have opened one extra tab on first open")
+
+		local first_buf_id = COMMAND_BUF_ID
+		api.open_curl_tab()
+		local second_buf_id = COMMAND_BUF_ID
+		test_util.assert_equals(first_buf_id, second_buf_id, "Buf should stay the same")
+
+		api.open_global_tab()
+		local third_buf_id = COMMAND_BUF_ID
+		assert(second_buf_id ~= third_buf_id, "Buffer should change")
+		assert(vim.tbl_contains(vim.api.nvim_list_bufs(), second_buf_id) == false, "cwd buffer should be closed")
+
+		api.open_custom_tab("test")
+		local fourth_buf_id = COMMAND_BUF_ID
+		assert(third_buf_id ~= fourth_buf_id, "Buffer should change")
+		assert(vim.tbl_contains(vim.api.nvim_list_bufs(), third_buf_id) == false, "global buffer should be closed")
+
+		local tabs = vim.api.nvim_list_tabpages()
+		test_util.assert_equals(#inital_tabs + 1, #tabs, "Should only have opened one extra tab")
 	end)
 end)

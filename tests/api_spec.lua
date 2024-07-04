@@ -15,6 +15,7 @@ describe("Api", function()
 
 			buffers.set_output_buffer_content({ "test" }, OUTPUT_BUF_ID)
 		end
+		local mock_pre = vim.fn.jobstart
 		vim.fn.jobstart = mocked_jobstart
 
 		api.open_curl_tab()
@@ -26,6 +27,7 @@ describe("Api", function()
 		local output = vim.api.nvim_buf_get_lines(OUTPUT_BUF_ID, 0, -1, false)
 
 		assert(output[1] == "test", "Curl should have produced a result")
+		vim.fn.jobstart = mock_pre
 	end)
 
 	it("can open custom buffer", function()

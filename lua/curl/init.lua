@@ -30,8 +30,17 @@ local create_curl_open = function()
 	})
 end
 
+local create_filetype = function()
+	vim.filetype.add({
+		extension = {
+			curl = "curl",
+		},
+	})
+end
 function M.setup(opts)
 	create_curl_open()
+
+	create_filetype()
 
 	vim.api.nvim_create_user_command("CurlClose", function()
 		require("curl.api").close_curl_tab()
