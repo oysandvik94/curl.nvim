@@ -116,7 +116,6 @@ curl -X POST https://jsonplaceholder.typicode.com/posts
 -H 'Content-Type: application/json'
 -d
 {
-  "id": 2
   "title": "now try this"
 }
 ```
