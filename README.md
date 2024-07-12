@@ -34,14 +34,12 @@ Installation example for [Lazy](https://github.com/folke/lazy.nvim):
 ```lua
 {
   "oysandvik94/curl.nvim",
+  cmd = { "CurlOpen" },
   dependencies = {
     "nvim-lua/plenary.nvim",
   },
-  config = function()
-    require("curl").setup({})
-  end
+  config = true,
 }
-
 ```
 
 To verify the installation run `:checkhealth curl`.
@@ -50,13 +48,13 @@ To verify the installation run `:checkhealth curl`.
 
 You can configure curl.nvim by running the `curl.setup()` function, passing a table as the argument.
 
+Or if you use [Lazy](https://github.com/folke/lazy.nvim), just pass the table into `opts` as described [here](https://lazy.folke.io/spec#spec-setup).
+
 <details>
 <summary>Default Config</summary>
 
 ```lua
-local curl = require("curl").setup()
-
-curl.setup {
+{
   -- Table of strings to specify default headers to be included in each request, i.e. "-i"
   default_flags = { },
   mappings = {
