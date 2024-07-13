@@ -266,8 +266,8 @@ Interesting features that might arrive soon:
 
 ## Alternatives
 
-- [rest.nvim](https://github.com/rest-nvim/rest.nvim) has a similar UI, using HTTP file syntax instead.
-  This is similar to Jetbrains HTTP clien
+- [kulala.nvim](https://github.com/mistweaverco/kulala.nvim) has a similar UI, using HTTP file syntax instead.
+  This is similar to Jetbrains HTTP client.
 
 ## Contributing
 
