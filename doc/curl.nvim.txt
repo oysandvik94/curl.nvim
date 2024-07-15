@@ -1,4 +1,4 @@
-*curl.nvim.txt*            For NVIM v0.8.0           Last change: 2024 July 13
+*curl.nvim.txt*            For NVIM v0.8.0           Last change: 2024 July 15
 
 ==============================================================================
 Table of Contents                                *curl.nvim-table-of-contents*
@@ -9,7 +9,7 @@ Table of Contents                                *curl.nvim-table-of-contents*
   - Features                                              |curl.nvim-features|
   - Lua api                                                |curl.nvim-lua-api|
   - Future plans                                      |curl.nvim-future-plans|
-  - Alternatives                                      |curl.nvim-alternatives|
+  - Similar plugins                                |curl.nvim-similar-plugins|
   - Contributing                                      |curl.nvim-contributing|
 
 
@@ -283,10 +283,12 @@ Interesting features that might arrive soon:
     or multiple named scratches
 
 
-ALTERNATIVES                                          *curl.nvim-alternatives*
+SIMILAR PLUGINS                                    *curl.nvim-similar-plugins*
 
-- rest.nvim <https://github.com/rest-nvim/rest.nvim> has a similar UI, using HTTP file syntax instead.
-    This is similar to Jetbrains HTTP clien
+- kulala.nvim <https://github.com/mistweaverco/kulala.nvim> using HTTP file syntax instead.
+    This is similar to Jetbrains HTTP client and vscode rest-client.
+- rest.nvim <https://github.com/rest-nvim/rest.nvim> using HTTP file syntax instead.
+    This is similar to Jetbrains HTTP client and vscode rest-client.
 
 
 CONTRIBUTING                                          *curl.nvim-contributing*
