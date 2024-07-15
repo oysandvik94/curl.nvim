@@ -2,31 +2,54 @@ local M = {}
 
 local api = require("curl.api")
 
+local function extract_collection_name(pattern, args)
+	return args:match(pattern)
+end
+
 local create_curl_open = function()
 	vim.api.nvim_create_user_command("CurlOpen", function(opts)
-		if opts.args == "global" then
-			require("curl.api").open_global_tab()
-		elseif opts.args:match("^custom%s+") then
-			local custom_arg = opts.args:match("^custom%s+(.+)$") ---@type string
-
-			api.open_custom_tab(custom_arg)
+		local args = opts.args ---@type string
+		if args == "global" then
+			api.open_global_tab()
+		elseif args:match("^collection global%s+") then
+			local collection_arg = extract_collection_name("^collection global%s+(.+)$", args) ---@type string
+			api.open_global_collection(collection_arg)
+		elseif args:match("^collection scoped%s+") then
+			local collection_arg = extract_collection_name("^collection scoped%s+(.+)$", args) ---@type string
+			api.open_scoped_collection(collection_arg)
+		elseif args:match("^collection%s+") then
+			local collection_arg = extract_collection_name("^collection%s+(.+)$", args) ---@type string
+			api.open_collection_tab(collection_arg)
 		else
-			require("curl.api").open_curl_tab()
+			api.open_curl_tab()
 		end
 	end, {
 		nargs = "*", -- This allows any number of arguments
 		complete = function(ArgLead, CmdLine, CursorPos)
-			if CmdLine:match("^CurlOpen custom") then
+			-- No arguments
+			if CmdLine:match("^CurlOpen%s$") then
+				return { "global", "collection" }
+			end
+
+			-- Custom global
+			if CmdLine:match("^CurlOpen collection global%s*") then
+				-- TODO: print global customs
 				return {}
 			end
-			if ArgLead == "" or ArgLead:match("^c") then
-				return { "global", "custom" }
-			elseif ArgLead:match("^custom%s*") then
-				return { "custom " }
+
+			-- Custom scoped
+			if CmdLine:match("^CurlOpen collection scoped%s*") then
+				-- TODO: print scoped customs
+				return {}
+			end
+			--
+			-- Custom
+			if CmdLine:match("^CurlOpen collection%s$") then
+				return { "global", "scoped" }
 			end
 			return {}
 		end,
-		desc = "Open tab for curl.nvim (use 'global' for global scope, or 'custom <arg>' for custom argument)",
+		desc = "Open tab for curl.nvim (use 'global' for global scope, or 'collection global|scoped <arg>' for collection)",
 	})
 end
 
