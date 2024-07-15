@@ -264,10 +264,12 @@ Interesting features that might arrive soon:
 - Enhance organization, by maybe folds, creating a picker for commands in the scratch,
   or multiple named scratches
 
-## Alternatives
+## Similar plugins
 
-- [kulala.nvim](https://github.com/mistweaverco/kulala.nvim) has a similar UI, using HTTP file syntax instead.
-  This is similar to Jetbrains HTTP client.
+- [kulala.nvim](https://github.com/mistweaverco/kulala.nvim) using HTTP file syntax instead.
+  This is similar to Jetbrains HTTP client and vscode rest-client.
+- [rest.nvim](https://github.com/rest-nvim/rest.nvim) using HTTP file syntax instead.
+  This is similar to Jetbrains HTTP client and vscode rest-client.
 
 ## Contributing
 
