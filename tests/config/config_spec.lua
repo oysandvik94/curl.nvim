@@ -16,6 +16,7 @@ describe("Config", function()
 		local curl_mapping = config.get("mappings")["execute_curl"]
 
 		test_util.assert_equals("<C-r>", curl_mapping)
+		curl.setup({})
 	end)
 
 	it("can set default flags", function()
@@ -34,5 +35,6 @@ describe("Config", function()
 		vim.api.nvim_buf_set_lines(0, 0, -1, false, { curl_command })
 		api.execute_curl()
 		vim.fn.jobstart = mock_pre
+		curl.setup({})
 	end)
 end)
