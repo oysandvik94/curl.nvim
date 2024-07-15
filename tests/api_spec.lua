@@ -31,14 +31,27 @@ describe("Api", function()
 	end)
 
 	it("can open custom buffer", function()
-		api.open_custom_tab("sauron")
+		local custom_name = "sauron"
+		api.open_scoped_collection(custom_name)
 
 		local bufname = vim.api.nvim_buf_get_name(0)
-		assert(bufname:find("sauron") ~= nil, "Custom buffer should be closed")
+		assert(bufname:find(custom_name) ~= nil, "Custom buffer should be open")
 
 		api.close_curl_tab()
 		local new_bufname = vim.api.nvim_buf_get_name(0)
-		assert(new_bufname:find("sauron") == nil, "Buffer should be closed")
+		assert(new_bufname:find(custom_name) == nil, "Buffer should be closed")
+	end)
+
+	it("can open custom global buffer", function()
+		local custom_name = "frodo"
+		api.open_global_collection(custom_name)
+
+		local bufname = vim.api.nvim_buf_get_name(0)
+		assert(bufname:find(custom_name) ~= nil, "Global custom buffer should be open")
+
+		api.close_curl_tab()
+		local new_bufname = vim.api.nvim_buf_get_name(0)
+		assert(new_bufname:find(custom_name) == nil, "Buffer should be closed")
 	end)
 
 	it("can open global buffer", function()

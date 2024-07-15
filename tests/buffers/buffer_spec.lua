@@ -71,8 +71,11 @@ describe("Api", function()
 		local before_buffer_count = #vim.api.nvim_list_wins()
 		api.execute_curl()
 		local after_buffer_count = #vim.api.nvim_list_wins()
-		test_util.assert_equals(before_buffer_count, after_buffer_count,
-			"Executing curl twice should not open output buffer twice")
+		test_util.assert_equals(
+			before_buffer_count,
+			after_buffer_count,
+			"Executing curl twice should not open output buffer twice"
+		)
 		vim.fn.jobstart = mock_pre
 	end)
 end)
@@ -112,7 +115,7 @@ describe("Buffer", function()
 		assert(second_buf_id ~= third_buf_id, "Buffer should change")
 		assert(vim.tbl_contains(vim.api.nvim_list_bufs(), second_buf_id) == false, "cwd buffer should be closed")
 
-		api.open_custom_tab("test")
+		api.open_scoped_collection("test")
 		local fourth_buf_id = COMMAND_BUF_ID
 		assert(third_buf_id ~= fourth_buf_id, "Buffer should change")
 		assert(vim.tbl_contains(vim.api.nvim_list_bufs(), third_buf_id) == false, "global buffer should be closed")

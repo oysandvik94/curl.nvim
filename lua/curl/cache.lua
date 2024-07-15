@@ -1,11 +1,25 @@
 local M = {}
 local Path = require("plenary.path")
 
+---comment
+---@param global boolean
+---@return string
+local function get_custom_dir(global)
+	if global then
+		return "custom"
+	else
+		local workspace_path = vim.fn.getcwd()
+		local unique = vim.fn.fnamemodify(workspace_path, ":t") .. "_" .. vim.fn.sha256(workspace_path):sub(1, 8) ---@type string
+		return "scopedcustom/" .. unique
+	end
+end
+
 ---@param filename string
 ---@return string
-M.load_custom_command_file = function(filename)
+M.load_custom_command_file = function(filename, global)
+	local custom_dir = get_custom_dir(global)
 	local curl_filename = filename .. ".curl"
-	local cache_dir = Path:new(vim.fn.stdpath("data")) / "curl_cache" / "custom" ---@type Path
+	local cache_dir = Path:new(vim.fn.stdpath("data")) / "curl_cache" / custom_dir ---@type Path
 	cache_dir:mkdir({ parents = true, exists_ok = true })
 
 	local custom_cache_dir = cache_dir / curl_filename ---@type Path

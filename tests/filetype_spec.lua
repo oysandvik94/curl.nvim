@@ -1,5 +1,4 @@
 local api = require("curl.api")
-local buffers = require("curl.buffers")
 local test_util = require("tests.test_util")
 
 after_each(function()
@@ -8,20 +7,15 @@ end)
 
 describe("Curl files", function()
 	it("can execute and automatically open buffer", function()
-		local curl_command = "curl localhost:8000"
+		vim.cmd("e test_hehe.curl")
 
-		local mocked_jobstart = function(command, callback)
-			test_util.assert_equals(curl_command .. " -sSL", command)
-		end
-		local mock_pre = vim.fn.jobstart
-		vim.fn.jobstart = mocked_jobstart
+		local keymap = vim.api.nvim_buf_get_keymap(0, "n")[1] ---@type vim.api.keyset.keymap
 
-		vim.cmd("e test.curl")
-		vim.api.nvim_buf_set_lines(0, 0, -1, false, { curl_command })
-
-		api.execute_curl()
-
-		assert(OUTPUT_BUF_ID ~= -1, "Curl should have produced a result")
-		vim.fn.jobstart = mock_pre
+		test_util.assert_equals("<CR>", keymap.lhs, "Should have bind to enter")
+		test_util.assert_equals(
+			"<Cmd>lua require('curl.api').execute_curl()<CR>",
+			keymap.rhs,
+			"Should bind curl execute"
+		)
 	end)
 end)

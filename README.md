@@ -14,8 +14,8 @@ curl.nvim allows you to run HTTP requests with curl from a scratchpad, and displ
 - Introduces the ".curl" filetype, where pressing enter will execute a curl request under the cursor
 - Quality of life formatting features, so that writing out curl commands is a *little* less tedious
 - Output is formatted using JQ
-- Persist a collections of curl request using various methods of persistence, such as a global file,
-named files, or a file that is stored per working directory
+- Open a curl command buffer that is either persisted globally or per working directory
+- Store collections (named files) that are etiher persisted globally or per working directory
 - It's just curl, so all the headers and auth flags you already know works
 
 See [the features section](<README#✨ Features>) for more information.
@@ -27,11 +27,9 @@ still using the knowledge of curl you already have.
 
 ## Installation and requirements
 
-The plugin requires you to have curl on your system, which you most likely have.
-
-If you dont have [jq](https://jqlang.github.io/jq/), you can most likely download it on your system
-through your preferred package manager. _curl.nvim_ uses jq to format JSON, but it's an amazing tool
-that I recommend you experiment with.
+- [Curl](https://curl.se)
+- [jq](https://jqlang.github.io/jq/),
+- Linux/Mac (I dont have a windows machine to test, feel free to create a PR)
 
 Installation example for [Lazy](https://github.com/folke/lazy.nvim):
 
@@ -40,10 +38,36 @@ Installation example for [Lazy](https://github.com/folke/lazy.nvim):
   "oysandvik94/curl.nvim",
   cmd = { "CurlOpen" },
   dependencies = {
-    "nvim-lua/plenary.nvim",
-  },
-  config = true,
+  "nvim-lua/plenary.nvim",
+},
+config = true,
 }
+```
+
+Below follows some example keymaps, but you should find a setup that works for you:
+
+```lua
+local curl = require("curl")
+
+vim.keymap.set("n", "<leader>cc", function()
+    curl.open_curl_tab()
+end, { desc = "Open a curl tab scoped to the current working directory" })
+
+vim.keymap.set("n", "<leader>co", function()
+    curl.open_global_tab()
+end, { desc = "Open a curl tab with gloabl scope" })
+
+vim.keymap.set("n", "<leader>csc", function()
+    vim.ui.input({ prompt = "Collection name: " }, function(input)
+        curl.open_scoped_collection(input)
+    end)
+end, { desc = "Create or open a collection with a name from user input" })
+
+vim.keymap.set("n", "<leader>cgc", function()
+    vim.ui.input({ prompt = "Collection name: " }, function(input)
+        curl.open_global_collection(input)
+    end)
+end, { desc = "Create or open a global collection with a name from user input" })
 ```
 
 To verify the installation run `:checkhealth curl`.
@@ -71,7 +95,7 @@ Or if you use [Lazy](https://github.com/folke/lazy.nvim), just pass the table in
 
 ## Usage
 
-You can open curl.nvim in three ways:
+You can open curl.nvim in four ways:
 
 ```vim
 " A buffer that is scoped to the current working directory
@@ -81,7 +105,10 @@ You can open curl.nvim in three ways:
 :CurlOpen global
 
 " A buffer with a custom name that can be opened from any Neovim instance
-:CurlOpen custom {any_name}
+:CurlOpen collection global {any_name}
+
+" A buffer with a custom name that is scoped to the curren working directory
+:CurlOpen collection scoped {any_name}
 ```
 
 or using the lua api:
@@ -89,7 +116,8 @@ or using the lua api:
 ```lua
 require("curl").open_curl_tab()
 require("curl").open_global_tab()
-require("curl").open_custom_tab("my_curls")
+require("curl").open_global_collection("my_curls")
+require("curl").open_scoped_collection("my_curls")
 ```
 
 Any of these commands will open a new tab containing two buffers split vertically.
@@ -214,19 +242,26 @@ use the global option.
 require("curl").open_global_tab()
 ```
 
-#### Custom buffers
+#### Collections
 
 If you want more control, or would like to organize your curl commands in logical collections,
-you can use the custom option to give names to your collections.
+you can use the "collection" option to give names to your collections.
 
-Next time you run `CurlOpen` with that given names, you will find your commands again.
+This will create a new collection, or open a collection if it exists with the given name
+
+You can either open a global collection, which is accessible from any Neovim instance,
+or a scoped collection which belongs to the current working directory. This means that if you
+have two collections with the same name created from different directories, the correct one
+will open from the given directory
 
 ```vim
-:CurlOpen custom mycoolcurls
+:CurlOpen collection global mycoolcurls
+:CurlOpen collection scoped mycoolcurls
 ```
 
 ```lua
-require("curl").open_custom_tab("mycoolcurls")
+require("curl").open_global_collection("mycoolcurls")
+require("curl").open_scoped_collection("mycoolcurls")
 ```
 
 ## Lua api
@@ -242,7 +277,8 @@ local curl = require('curl')
 -- See ### Persistence under ## Features
 curl.open_curl_tab()
 curl.open_global_tab()
-curl.open_custom_tab()
+curl.open_scoped_collection()
+curl.open_global_collection()
 
 -- Close the tab containing curl buffers
 curl.close_curl_tab()
