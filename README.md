@@ -117,6 +117,9 @@ Or if you use [Lazy](https://github.com/folke/lazy.nvim), just pass the table in
 {
   -- Table of strings to specify default headers to be included in each request, i.e. "-i"
   default_flags = { },
+  -- Specify an alternative curl binary that will be used to run curl commands
+  -- String of either full path, or binary in path
+  curl_binary = nil,
   mappings = {
       execute_curl = "<CR>"
   }
@@ -302,6 +305,10 @@ curl.get_scoped_collections()
 -- given collection when selected
 curl.pick_global_collection()
 curl.pick_scoped_collection()
+
+-- Specify an alternative curl binary that will be used to run curl commands
+-- String of either full path, or binary in path
+curl.set_curl_binary("someothercurl")
 ```
 
 </details>

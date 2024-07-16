@@ -2,6 +2,8 @@
 local default_config = {
 	---@type table<string>
 	default_flags = {},
+	---@type string
+	curl_binary = nil,
 	---@type table<'execute_curl', string>
 	mappings = {
 		execute_curl = "<CR>",
@@ -24,6 +26,10 @@ function mod.get(key)
 	end
 
 	return mod.config
+end
+
+function mod.set(key, value)
+	mod.config[key] = value
 end
 
 return mod
