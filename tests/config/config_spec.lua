@@ -3,6 +3,10 @@ local config = require("curl.config")
 local test_util = require("tests.test_util")
 local api = require("curl.api")
 
+after_each(function()
+	api.close_curl_tab(true)
+end)
+
 describe("Config", function()
 	it("has default mapping", function()
 		local default_mapping = config.get("mappings")["execute_curl"]
@@ -36,5 +40,44 @@ describe("Config", function()
 		api.execute_curl()
 		vim.fn.jobstart = mock_pre
 		curl.setup({})
+	end)
+
+	it("can set alternative curl alias from config", function()
+		local curl_alias = "/my/cool/curl"
+		curl.setup({ curl_binary = curl_alias })
+		test_util.assert_equals(config.get("curl_binary"), curl_alias, "Curl alias should be set")
+
+		local curl_command = "curl localhost:8000"
+
+		local mocked_jobstart = function(command, _)
+			test_util.assert_equals(curl_alias .. " localhost:8000 -sSL", command, "Curl alias should be used")
+		end
+		local mock_pre = vim.fn.jobstart
+		vim.fn.jobstart = mocked_jobstart
+
+		api.open_curl_tab()
+		vim.api.nvim_buf_set_lines(0, 0, -1, false, { curl_command })
+		api.execute_curl()
+		vim.fn.jobstart = mock_pre
+		curl.setup({})
+	end)
+
+	it("can set alternative curl alias in runtime", function()
+		local curl_alias = "/my/cool/curl"
+		api.set_curl_binary(curl_alias)
+		test_util.assert_equals(config.get("curl_binary"), curl_alias, "Curl alias should be set")
+
+		local curl_command = "curl localhost:8000"
+
+		local mocked_jobstart = function(command, _)
+			test_util.assert_equals(curl_alias .. " localhost:8000 -sSL", command, "Curl alias should be used")
+		end
+		local mock_pre = vim.fn.jobstart
+		vim.fn.jobstart = mocked_jobstart
+
+		api.open_curl_tab()
+		vim.api.nvim_buf_set_lines(0, 0, -1, false, { curl_command })
+		api.execute_curl()
+		vim.fn.jobstart = mock_pre
 	end)
 end)

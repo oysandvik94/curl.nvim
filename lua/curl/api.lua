@@ -1,6 +1,7 @@
 local M = {}
 
 local parser = require("curl.parser")
+local config = require("curl.config")
 local cache = require("curl.cache")
 local buffers = require("curl.buffers")
 local output_parser = require("curl.output_parser")
@@ -92,6 +93,11 @@ M.execute_curl = function()
 	local cursor_pos, lines = buffers.get_command_buffer_and_pos()
 	local curl_command = parser.parse_curl_command(cursor_pos, lines)
 
+	local curl_alias = config.get("curl_binary")
+	if curl_alias ~= nil then
+		curl_command = curl_command:gsub("^curl", curl_alias)
+	end
+
 	if curl_command == "" then
 		notify.error("No curl command found under the cursor")
 		return
@@ -118,6 +124,10 @@ M.execute_curl = function()
 			error = error .. vim.fn.join(data)
 		end,
 	})
+end
+
+M.set_curl_binary = function(binary_name)
+	config.set("curl_binary", binary_name)
 end
 
 return M
