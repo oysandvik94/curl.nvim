@@ -56,6 +56,12 @@ describe("Api", function()
 		assert(left_name == nil, "Left buf in curl tab should be closed")
 	end)
 
+	it("should close even if command was opened twice", function()
+		api.open_scoped_collection("foo")
+		api.open_scoped_collection("test")
+		api.close_curl_tab()
+	end)
+
 	it("calling close twice should not error", function()
 		api.open_curl_tab()
 		api.close_curl_tab()
@@ -105,20 +111,25 @@ describe("Buffer", function()
 		local first_tabs = vim.api.nvim_list_tabpages()
 		test_util.assert_equals(#inital_tabs + 1, #first_tabs, "Should only have opened one extra tab on first open")
 
-		local first_buf_id = COMMAND_BUF_ID
-		api.open_curl_tab()
+		local pre_buf_count = #vim.api.nvim_list_bufs()
 		local second_buf_id = COMMAND_BUF_ID
-		test_util.assert_equals(first_buf_id, second_buf_id, "Buf should stay the same")
+		api.open_curl_tab()
+		local post_buf_count = #vim.api.nvim_list_bufs()
+		test_util.assert_equals(pre_buf_count, post_buf_count, "Buf should stay the same")
 
 		api.open_global_tab()
 		local third_buf_id = COMMAND_BUF_ID
 		assert(second_buf_id ~= third_buf_id, "Buffer should change")
 		assert(vim.tbl_contains(vim.api.nvim_list_bufs(), second_buf_id) == false, "cwd buffer should be closed")
 
+		test_util.assert_equals(post_buf_count, #vim.api.nvim_list_bufs(), "Should not open more buffers, just replace")
+
 		api.open_scoped_collection("test")
 		local fourth_buf_id = COMMAND_BUF_ID
 		assert(third_buf_id ~= fourth_buf_id, "Buffer should change")
 		assert(vim.tbl_contains(vim.api.nvim_list_bufs(), third_buf_id) == false, "global buffer should be closed")
+
+		test_util.assert_equals(post_buf_count, #vim.api.nvim_list_bufs(), "Should not open more buffers, just replace")
 
 		local tabs = vim.api.nvim_list_tabpages()
 		test_util.assert_equals(#inital_tabs + 1, #tabs, "Should only have opened one extra tab")

@@ -2,7 +2,6 @@ local M = {}
 
 OUTPUT_BUF_ID = -1
 COMMAND_BUF_ID = -1
-CURL_WINDOW_ID = -1
 TAB_ID = "curl.nvim.tab"
 RESULT_BUF_NAME = "Curl output"
 
@@ -43,29 +42,14 @@ local function open_or_goto_curl_tab()
 
 	vim.cmd("tabnew")
 	vim.api.nvim_tabpage_set_var(0, "id", TAB_ID)
-	return vim.api.nvim_tabpage_get_win(0)
 end
 
-local create_command_buffer = function(command_file)
-	local command_bufnr = vim.fn.bufnr(command_file, false)
-	vim.api.nvim_win_set_buf(CURL_WINDOW_ID, command_bufnr)
-	return command_bufnr
-end
-
-local replace_command_buffer = function(command_file)
+local open_command_buffer = function(command_file)
 	close_curl_buffer(COMMAND_BUF_ID, false)
 	vim.cmd.edit(command_file)
 	local new_bufnr = vim.fn.bufnr(command_file, false)
 
 	return new_bufnr
-end
-
-local open_command_buffer = function(command_file)
-	if buf_is_open(command_file) then
-		return create_command_buffer(command_file)
-	end
-
-	return replace_command_buffer(command_file)
 end
 
 local result_open_in_current_tab = function()
@@ -117,7 +101,7 @@ local open_result_buffer = function()
 end
 
 M.setup_curl_tab_for_file = function(filename)
-	CURL_WINDOW_ID = open_or_goto_curl_tab()
+	open_or_goto_curl_tab()
 
 	COMMAND_BUF_ID = open_command_buffer(filename)
 
@@ -125,13 +109,9 @@ M.setup_curl_tab_for_file = function(filename)
 end
 
 M.close_curl_tab = function(force)
-	if CURL_WINDOW_ID ~= -1 then
-		vim.api.nvim_win_close(CURL_WINDOW_ID, force)
-	end
-
 	close_curl_buffer(COMMAND_BUF_ID, force)
 	close_curl_buffer(OUTPUT_BUF_ID, force)
-	CURL_WINDOW_ID, COMMAND_BUF_ID, OUTPUT_BUF_ID = -1, -1, -1
+	COMMAND_BUF_ID, OUTPUT_BUF_ID = -1, -1, -1
 end
 
 M.get_command_buffer_and_pos = function()
