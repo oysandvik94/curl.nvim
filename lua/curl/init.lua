@@ -60,6 +60,7 @@ local create_filetype = function()
 		},
 	})
 end
+
 function M.setup(opts)
 	create_curl_open()
 

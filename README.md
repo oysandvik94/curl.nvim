@@ -48,6 +48,7 @@ Below follows some example keymaps, but you should find a setup that works for y
 
 ```lua
 local curl = require("curl")
+curl.setup({})
 
 vim.keymap.set("n", "<leader>cc", function()
     curl.open_curl_tab()
