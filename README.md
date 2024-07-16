@@ -15,7 +15,7 @@ curl.nvim allows you to run HTTP requests with curl from a scratchpad, and displ
 - Quality of life formatting features, so that writing out curl commands is a *little* less tedious
 - Output is formatted using JQ
 - Open a curl command buffer that is either persisted globally or per working directory
-- Store collections (named files) that are etiher persisted globally or per working directory
+- Store and retrieve collections (named files) that are either persisted globally or per working directory
 - It's just curl, so all the headers and auth flags you already know works
 
 See [the features section](<README#✨ Features>) for more information.
@@ -44,7 +44,33 @@ config = true,
 }
 ```
 
-Below follows some example keymaps, but you should find a setup that works for you:
+To get started quickly, check out some commands under to get you going.
+For more detailed documentation, see examples under [Features](<README#✨ Features>)! 
+
+```vim
+" A buffer that is scoped to the current working directory
+:CurlOpen
+
+" A global buffer that will be the same for all Neovim instances
+:CurlOpen global
+
+" Create or open a new collection with the given scope
+:CurlOpen collection global {any_name}
+:CurlOpen collection scoped {any_name}
+
+" Open a picker to select a collection
+:CurlCollection global
+:CurlCollection scoped
+```
+
+These commands will open the curl.nvim tab. In the left buffer, you can paste or write curl 
+commands, and by pressing Enter, the command will execute, and the output will be shown and 
+formatted in the rightmost buffer.
+
+If you wish, you can select the text in the right buffer, and filter it using jq, i.e.
+`ggVG! jq '{query goes here}'`
+
+Below follows some example keymaps, (see the [API docs](<README#Lua api>) for possibilites)
 
 ```lua
 local curl = require("curl")
@@ -58,17 +84,22 @@ vim.keymap.set("n", "<leader>co", function()
     curl.open_global_tab()
 end, { desc = "Open a curl tab with gloabl scope" })
 
+-- These commands will prompt you for a name for your collection
 vim.keymap.set("n", "<leader>csc", function()
-    vim.ui.input({ prompt = "Collection name: " }, function(input)
-        curl.open_scoped_collection(input)
-    end)
+      curl.create_scoped_collection()
 end, { desc = "Create or open a collection with a name from user input" })
 
 vim.keymap.set("n", "<leader>cgc", function()
-    vim.ui.input({ prompt = "Collection name: " }, function(input)
-        curl.open_global_collection(input)
-    end)
+      curl.create_global_collection()
 end, { desc = "Create or open a global collection with a name from user input" })
+
+vim.keymap.set("n", "<leader>fsc", function()
+      curl.pick_scoped_collection()
+end, { desc = "Choose a scoped collection and open it" })
+
+vim.keymap.set("n", "<leader>fgc", function()
+      curl.pick_global_collection()
+end, { desc = "Choose a global collection and open it" })
 ```
 
 To verify the installation run `:checkhealth curl`.
@@ -93,43 +124,6 @@ Or if you use [Lazy](https://github.com/folke/lazy.nvim), just pass the table in
 ```
 
 </details>
-
-## Usage
-
-You can open curl.nvim in four ways:
-
-```vim
-" A buffer that is scoped to the current working directory
-:CurlOpen
-
-" A global buffer that will be the same for all Neovim instances
-:CurlOpen global
-
-" A buffer with a custom name that can be opened from any Neovim instance
-:CurlOpen collection global {any_name}
-
-" A buffer with a custom name that is scoped to the curren working directory
-:CurlOpen collection scoped {any_name}
-```
-
-or using the lua api:
-
-```lua
-require("curl").open_curl_tab()
-require("curl").open_global_tab()
-require("curl").open_global_collection("my_curls")
-require("curl").open_scoped_collection("my_curls")
-```
-
-Any of these commands will open a new tab containing two buffers split vertically.
-
-In the left buffer, you can paste or write curl commands, and by pressing Enter, the
-command will execute, and the output will be shown and formatted in the rightmost buffer.
-
-If you wish, you can select the text in the right buffer, and filter it using jq, i.e.
-`ggVG! jq '{query goes here}'`
-
-See examples under [Features](<README#✨ Features>) for more information
 
 ## ✨ Features
 
@@ -217,57 +211,52 @@ curl -X GET "https://httpbin.org/bearer" -H "accept: application/json" -H "Autho
 
 </details>
 
-### 💪 Persistence
+### 💪 Collections
 
 There are multiple ways to work with the scratch buffers, so you can tailor it to your own workflow.
-
-#### Per directory
-
-Running `:CurlOpen` or `require("curl").open_curl_tab()` will open a command buffer that is
-tied to your current working directory. If you open neovim in a different directory, a different
-set of commands will be shown.
-
+By default, running ":CurlOpen" will open a command buffer that is tied to your current working directory.
 If you treat directories as "projects", and always open neovim in the root of your project directories,
 then this option might be useful for you.
 
-#### Global buffers
-
-If you want your curl commands to always be available, regardless of where you launch Neovim from,
-use the global option.
-
-```vim
-:CurlOpen global
-```
-
-```lua
-require("curl").open_global_tab()
-```
-
-#### Collections
+Using ":CurlOpen global" you can open a global buffer that will always be the same across your
+Neovim instances.
 
 If you want more control, or would like to organize your curl commands in logical collections,
-you can use the "collection" option to give names to your collections.
+you can use the "collection" functionality to create named command buffers.
 
-This will create a new collection, or open a collection if it exists with the given name
-
-You can either open a global collection, which is accessible from any Neovim instance,
-or a scoped collection which belongs to the current working directory. This means that if you
-have two collections with the same name created from different directories, the correct one
-will open from the given directory
+These are also scoped either globally or per working directory.
 
 ```vim
+" Create or open a collection
 :CurlOpen collection global mycoolcurls
 :CurlOpen collection scoped mycoolcurls
+
+" Choose a collection from a picker
+:CurlCollection scoped
+:CurlCollection global
 ```
 
 ```lua
 require("curl").open_global_collection("mycoolcurls")
 require("curl").open_scoped_collection("mycoolcurls")
+
+-- This will prompt you for a name instead
+require("curl").create_global_collection()
+
+-- Choose a collection from a picker
+require("curl").pick_scoped_collection()
 ```
+
+The pickers are based on vim.ui.select, which means it will use whatever frontend you have configured.
+This might be the neovim default picker, or telescope/fzf-lua if configured. See for example
+[dressing.nvim](https://github.com/stevearc/dressing.nvim) or [this telescope extension](https://github.com/nvim-telescope/telescope-ui-select.nvim/tree/master) for ways of configuring this.
+
+In the future, I (or someone else) might create a dedicated telescope/fzf picker to get features
+like preview enabled.
 
 ## Lua api
 
-The plugin also exposes this lua api:
+This section describes all the methods in the exposed lua api
 
 <details>
 <summary>See lua api</summary>
@@ -275,11 +264,14 @@ The plugin also exposes this lua api:
 ```lua
 local curl = require('curl')
 
--- See ### Persistence under ## Features
+-- These functions will open the curl tab with the given command buffer
+-- If the curl tab is open, it will replace the existing command buffer with the selected on, and
+-- go to the tab
+
+-- Command buffer scoped to the current working directory
 curl.open_curl_tab()
+-- Globally scoped command buffer available in all Neovim instances
 curl.open_global_tab()
-curl.open_scoped_collection()
-curl.open_global_collection()
 
 -- Close the tab containing curl buffers
 curl.close_curl_tab()
@@ -287,6 +279,29 @@ curl.close_curl_tab()
 -- Executes the curl command under the cursor when the command buffer is open
 -- Also executed by the "execute_curl" mapping, as seen in the configuration. Mapped to <CR> by default
 curl.execute_curl()
+
+--------------------
+
+-- The below functions are related to collections
+
+-- Will either open or create a collection with the given name as input
+curl.open_scoped_collection({name})
+curl.open_global_collection({name})
+
+-- Same as get_global_colletion(), but does not take 
+-- input and promps the user for a name with vim.ui.input
+curl.create_global_collection() 
+curl.create_scoped_collection() 
+
+-- Return a list of collections in a table
+-- The name is the given name, not the filename (".curl" extension is omitted)
+curl.get_global_collections()
+curl.get_scoped_collections()
+
+-- Opens a picker using vim.ui.select() that will open the
+-- given collection when selected
+curl.pick_global_collection()
+curl.pick_scoped_collection()
 ```
 
 </details>
