@@ -1,9 +1,31 @@
 local M = {}
 
 local api = require("curl.api")
+local cache = require("curl.cache")
 
 local function extract_collection_name(pattern, args)
 	return args:match(pattern)
+end
+
+local create_curl_pick = function()
+	vim.api.nvim_create_user_command("CurlCollection", function(opts)
+		local args = opts.args ---@type string
+		if args == "global" then
+			api.pick_global_collection()
+		elseif args == "scoped" then
+			api.pick_scoped_collection()
+		end
+	end, {
+		nargs = "*",
+		complete = function(_, CmdLine, _)
+			if CmdLine:match("^CurlCollection%s$") then
+				return { "global", "scoped" }
+			end
+
+			return {}
+		end,
+		desc = "Search for a global or scoped collection",
+	})
 end
 
 local create_curl_open = function()
@@ -25,7 +47,7 @@ local create_curl_open = function()
 		end
 	end, {
 		nargs = "*", -- This allows any number of arguments
-		complete = function(ArgLead, CmdLine, CursorPos)
+		complete = function(_, CmdLine, _)
 			-- No arguments
 			if CmdLine:match("^CurlOpen%s$") then
 				return { "global", "collection" }
@@ -33,14 +55,12 @@ local create_curl_open = function()
 
 			-- Custom global
 			if CmdLine:match("^CurlOpen collection global%s*") then
-				-- TODO: print global customs
-				return {}
+				return cache.get_collections(true)
 			end
 
 			-- Custom scoped
 			if CmdLine:match("^CurlOpen collection scoped%s*") then
-				-- TODO: print scoped customs
-				return {}
+				return cache.get_collections(false)
 			end
 			--
 			-- Custom
@@ -63,6 +83,7 @@ end
 
 function M.setup(opts)
 	create_curl_open()
+	create_curl_pick()
 
 	create_filetype()
 
