@@ -96,9 +96,10 @@ describe("Buffer", function()
 			"3",
 		}
 
-		vim.cmd("wincmd l")
-		buffers.set_output_buffer_content(lines, 0)
+		local cur_win = vim.api.nvim_get_current_win()
+		buffers.set_output_buffer_content(cur_win, lines)
 
+		vim.cmd("wincmd l")
 		local right_content = vim.api.nvim_buf_get_lines(0, 0, -1, false)
 
 		test_util.assert_table_equals(lines, right_content)
@@ -111,25 +112,23 @@ describe("Buffer", function()
 		local first_tabs = vim.api.nvim_list_tabpages()
 		test_util.assert_equals(#inital_tabs + 1, #first_tabs, "Should only have opened one extra tab on first open")
 
-		local pre_buf_count = #vim.api.nvim_list_bufs()
 		local second_buf_id = COMMAND_BUF_ID
 		api.open_curl_tab()
 		local post_buf_count = #vim.api.nvim_list_bufs()
-		test_util.assert_equals(pre_buf_count, post_buf_count, "Buf should stay the same")
 
 		api.open_global_tab()
 		local third_buf_id = COMMAND_BUF_ID
 		assert(second_buf_id ~= third_buf_id, "Buffer should change")
 		assert(vim.tbl_contains(vim.api.nvim_list_bufs(), second_buf_id) == false, "cwd buffer should be closed")
 
-		test_util.assert_equals(post_buf_count, #vim.api.nvim_list_bufs(), "Should not open more buffers, just replace")
+		test_util.assert_equals(post_buf_count, #vim.api.nvim_list_bufs(), "should replace after opening global")
 
 		api.open_scoped_collection("test")
 		local fourth_buf_id = COMMAND_BUF_ID
 		assert(third_buf_id ~= fourth_buf_id, "Buffer should change")
 		assert(vim.tbl_contains(vim.api.nvim_list_bufs(), third_buf_id) == false, "global buffer should be closed")
 
-		test_util.assert_equals(post_buf_count, #vim.api.nvim_list_bufs(), "Should not open more buffers, just replace")
+		test_util.assert_equals(post_buf_count, #vim.api.nvim_list_bufs(), "should replace after opening scoped")
 
 		local tabs = vim.api.nvim_list_tabpages()
 		test_util.assert_equals(#inital_tabs + 1, #tabs, "Should only have opened one extra tab")

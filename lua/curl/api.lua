@@ -90,6 +90,7 @@ M.close_curl_tab = function(force)
 end
 
 M.execute_curl = function()
+	local executed_from_win = vim.api.nvim_get_current_win()
 	local cursor_pos, lines = buffers.get_command_buffer_and_pos()
 	local curl_command = parser.parse_curl_command(cursor_pos, lines)
 
@@ -110,12 +111,12 @@ M.execute_curl = function()
 		on_exit = function(_, exit_code, _)
 			if exit_code ~= 0 then
 				notify.error("Curl failed")
-				buffers.set_output_buffer_content(vim.split(error, "\n"))
+				buffers.set_output_buffer_content(executed_from_win, vim.split(error, "\n"))
 				return
 			end
 
 			local parsed_output = output_parser.parse_curl_output(output)
-			buffers.set_output_buffer_content(parsed_output)
+			buffers.set_output_buffer_content(executed_from_win, parsed_output)
 		end,
 		on_stdout = function(_, data, _)
 			output = output .. vim.fn.join(data)

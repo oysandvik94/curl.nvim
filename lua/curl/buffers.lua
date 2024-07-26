@@ -48,14 +48,15 @@ local open_command_buffer = function(command_file)
 	close_curl_buffer(COMMAND_BUF_ID, false)
 	vim.cmd.edit(command_file)
 	local new_bufnr = vim.fn.bufnr(command_file, false)
+	local new_win = vim.api.nvim_get_current_win()
 
-	return new_bufnr
+	return new_bufnr, new_win
 end
 
-local result_open_in_current_tab = function()
-	local buffer = vim.fn.bufnr(RESULT_BUF_NAME, false)
+local result_open_in_current_tab = function(res_buf_name)
+	local buffer = vim.fn.bufnr(res_buf_name, false)
 
-	if not buf_is_open(RESULT_BUF_NAME) then
+	if not buf_is_open(res_buf_name) then
 		return
 	end
 
@@ -76,24 +77,23 @@ local result_open_in_current_tab = function()
 	return false
 end
 
-local get_result_bufnr = function()
-	return vim.fn.bufnr(RESULT_BUF_NAME, false)
-end
+local open_result_buffer = function(called_from_win_id)
+	local open_resbuf_name = RESULT_BUF_NAME .. "_" .. called_from_win_id ---@type string
 
-local open_result_buffer = function()
-	if result_open_in_current_tab() then
+	vim.api.nvim_set_current_win(called_from_win_id)
+	if result_open_in_current_tab(open_resbuf_name) then
 		return
 	end
 
-	if buf_is_open(RESULT_BUF_NAME) then
-		local bufnr = vim.fn.bufnr(RESULT_BUF_NAME, false)
+	if buf_is_open(open_resbuf_name) then
+		local bufnr = vim.fn.bufnr(open_resbuf_name, false)
 		vim.cmd("vert belowright sb" .. bufnr .. " | wincmd p")
 		OUTPUT_BUF_ID = bufnr
 		return
 	end
 
 	local new_bufnr = vim.api.nvim_create_buf(false, true)
-	vim.api.nvim_buf_set_name(new_bufnr, RESULT_BUF_NAME)
+	vim.api.nvim_buf_set_name(new_bufnr, open_resbuf_name)
 	vim.api.nvim_set_option_value("filetype", "json", { buf = new_bufnr })
 	vim.api.nvim_set_option_value("buftype", "nofile", { buf = new_bufnr })
 	vim.cmd("vert belowright sb" .. new_bufnr .. " | wincmd p")
@@ -103,9 +103,11 @@ end
 M.setup_curl_tab_for_file = function(filename)
 	open_or_goto_curl_tab()
 
-	COMMAND_BUF_ID = open_command_buffer(filename)
+	local new_buf_id, current_win = open_command_buffer(filename)
+	COMMAND_BUF_ID = new_buf_id
 
-	open_result_buffer()
+	close_curl_buffer(OUTPUT_BUF_ID, false)
+	open_result_buffer(current_win)
 end
 
 M.close_curl_tab = function(force)
@@ -123,10 +125,9 @@ M.get_command_buffer_and_pos = function()
 	return cursor_pos, lines
 end
 
-M.set_output_buffer_content = function(content)
-	open_result_buffer()
-	local buf_id = get_result_bufnr()
-	vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, content)
+M.set_output_buffer_content = function(executed_from_win, content)
+	open_result_buffer(executed_from_win)
+	vim.api.nvim_buf_set_lines(OUTPUT_BUF_ID, 0, -1, false, content)
 end
 
 return M
