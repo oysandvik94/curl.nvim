@@ -13,7 +13,7 @@ describe("Api", function()
 		local mocked_jobstart = function(command, callback)
 			test_util.assert_equals(curl_command .. " -sSL", command)
 
-			buffers.set_output_buffer_content({ "test" }, OUTPUT_BUF_ID)
+			buffers.set_output_buffer_content(0, { "test" })
 		end
 		local mock_pre = vim.fn.jobstart
 		vim.fn.jobstart = mocked_jobstart

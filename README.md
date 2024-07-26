@@ -12,7 +12,7 @@ https://github.com/oysandvik94/curl.nvim/assets/25078429/9c25d289-c293-41c4-9d8d
 curl.nvim allows you to run HTTP requests with curl from a scratchpad, and display the formatted output
 
 - Introduces the ".curl" filetype, where pressing enter will execute a curl request under the cursor
-- Quality of life formatting features, so that writing out curl commands is a *little* less tedious
+- Quality of life formatting features, so that writing out curl commands is a _little_ less tedious
 - Output is formatted using JQ
 - Open a curl command buffer that is either persisted globally or per working directory
 - Store and retrieve collections (named files) that are either persisted globally or per working directory
@@ -45,7 +45,7 @@ config = true,
 ```
 
 To get started quickly, check out some commands under to get you going.
-For more detailed documentation, see examples under [Features](<README#✨ Features>)! 
+For more detailed documentation, see examples under [Features](<README#✨ Features>)!
 
 ```vim
 " A buffer that is scoped to the current working directory
@@ -63,8 +63,8 @@ For more detailed documentation, see examples under [Features](<README#✨ Featu
 :CurlCollection scoped
 ```
 
-These commands will open the curl.nvim tab. In the left buffer, you can paste or write curl 
-commands, and by pressing Enter, the command will execute, and the output will be shown and 
+These commands will open the curl.nvim tab. In the left buffer, you can paste or write curl
+commands, and by pressing Enter, the command will execute, and the output will be shown and
 formatted in the rightmost buffer.
 
 If you wish, you can select the text in the right buffer, and filter it using jq, i.e.
@@ -132,7 +132,7 @@ Or if you use [Lazy](https://github.com/folke/lazy.nvim), just pass the table in
 
 ### 💪 .curl filetype
 
-Opening any file with the ".curl" file extension will activate this plugins features. 
+Opening any file with the ".curl" file extension will activate this plugins features.
 You will get some syntax highlighting and the ability to execute curl commands from you buffer.
 Since any ".curl" file will work, you can manage your own collection instead of using the builtin
 system, and even check in files to your repository.
@@ -291,10 +291,10 @@ curl.execute_curl()
 curl.open_scoped_collection({name})
 curl.open_global_collection({name})
 
--- Same as get_global_colletion(), but does not take 
+-- Same as get_global_colletion(), but does not take
 -- input and promps the user for a name with vim.ui.input
-curl.create_global_collection() 
-curl.create_scoped_collection() 
+curl.create_global_collection()
+curl.create_scoped_collection()
 
 -- Return a list of collections in a table
 -- The name is the given name, not the filename (".curl" extension is omitted)
@@ -312,6 +312,25 @@ curl.set_curl_binary("someothercurl")
 ```
 
 </details>
+
+## Troublshooting
+
+### DAP
+
+If you are debugging using [nvim-dap](https://github.com/mfussenegger/nvim-dap), then you might
+be in a workflow where you have a debugging session active, and your curl request triggers a
+breakpoint. This will cause the curl buffer to change to the buffer containing the breakpoint.
+
+This can be disorienting, but can be relieved by using the `:h switchbuf` option.
+
+```lua
+vim.opt.switchbuf = "usetab"
+```
+
+"usetab" will instead use an open window containing a buffer with the breakpoint, instead of
+messing up your curl window.
+
+See `:h switchbuf` for other values that might also fit your workflow.
 
 ## Future plans
 
