@@ -1,4 +1,4 @@
-*curl.nvim.txt*            For NVIM v0.8.0           Last change: 2024 July 16
+*curl.nvim.txt*            For NVIM v0.8.0           Last change: 2024 July 28
 
 ==============================================================================
 Table of Contents                                *curl.nvim-table-of-contents*
@@ -7,6 +7,7 @@ Table of Contents                                *curl.nvim-table-of-contents*
   - Configuration                                    |curl.nvim-configuration|
   - Features                                              |curl.nvim-features|
   - Lua api                                                |curl.nvim-lua-api|
+  - Troublshooting                                  |curl.nvim-troublshooting|
   - Future plans                                      |curl.nvim-future-plans|
   - Similar plugins                                |curl.nvim-similar-plugins|
   - Contributing                                      |curl.nvim-contributing|
@@ -304,10 +305,10 @@ See lua api ~
     curl.open_scoped_collection({name})
     curl.open_global_collection({name})
     
-    -- Same as get_global_colletion(), but does not take 
+    -- Same as get_global_colletion(), but does not take
     -- input and promps the user for a name with vim.ui.input
-    curl.create_global_collection() 
-    curl.create_scoped_collection() 
+    curl.create_global_collection()
+    curl.create_scoped_collection()
     
     -- Return a list of collections in a table
     -- The name is the given name, not the filename (".curl" extension is omitted)
@@ -323,6 +324,28 @@ See lua api ~
     -- String of either full path, or binary in path
     curl.set_curl_binary("someothercurl")
 <
+
+
+TROUBLSHOOTING                                      *curl.nvim-troublshooting*
+
+
+DAP ~
+
+If you are debugging using nvim-dap <https://github.com/mfussenegger/nvim-dap>,
+then you might be in a workflow where you have a debugging session active, and
+your curl request triggers a breakpoint. This will cause the curl buffer to
+change to the buffer containing the breakpoint.
+
+This can be disorienting, but can be relieved by using the |switchbuf| option.
+
+>lua
+    vim.opt.switchbuf = "usetab"
+<
+
+"usetab" will instead use an open window containing a buffer with the
+breakpoint, instead of messing up your curl window.
+
+See |switchbuf| for other values that might also fit your workflow.
 
 
 FUTURE PLANS                                          *curl.nvim-future-plans*
