@@ -9,22 +9,25 @@ local notify = require("curl.notifications")
 
 M.create_global_collection = function()
 	vim.ui.input({ prompt = "Collection name: " }, function(input)
+		if input == nil then
+			return
+		end
 		M.open_global_collection(input)
 	end)
 end
 
-local picker_opts = {
-	prompt = "Open a collection:",
-}
 M.create_scoped_collection = function()
 	vim.ui.input({ prompt = "Collection name: " }, function(input)
+		if input == nil then
+			return
+		end
 		M.open_scoped_collection(input)
 	end)
 end
 
 M.pick_global_collection = function()
 	local global_collections = cache.get_collections(true)
-	vim.ui.select(global_collections, picker_opts, function(selection)
+	vim.ui.select(global_collections, { prompt = "Open a global collection:" }, function(selection)
 		if selection == nil then
 			return
 		end
@@ -35,7 +38,7 @@ end
 
 M.pick_scoped_collection = function()
 	local scoped_collections = cache.get_collections(false)
-	vim.ui.select(scoped_collections, picker_opts, function(selection)
+	vim.ui.select(scoped_collections, { prompt = "Open a scoped collection:" }, function(selection)
 		if selection == nil then
 			return
 		end
