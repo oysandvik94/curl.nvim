@@ -45,7 +45,6 @@ local function open_or_goto_curl_tab()
 end
 
 local open_command_buffer = function(command_file)
-	close_curl_buffer(COMMAND_BUF_ID, false)
 	vim.cmd.edit(command_file)
 	local new_bufnr = vim.fn.bufnr(command_file, false)
 	local new_win = vim.api.nvim_get_current_win()
@@ -105,9 +104,6 @@ M.setup_curl_tab_for_file = function(filename)
 
 	local new_buf_id, current_win = open_command_buffer(filename)
 	COMMAND_BUF_ID = new_buf_id
-
-	close_curl_buffer(OUTPUT_BUF_ID, false)
-	open_result_buffer(current_win)
 end
 
 M.close_curl_tab = function(force)
