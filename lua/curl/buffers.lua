@@ -130,4 +130,13 @@ M.set_output_buffer_content = function(executed_from_win, content)
 	vim.api.nvim_buf_set_lines(OUTPUT_BUF_ID, 0, -1, false, content)
 end
 
+M.open_scratch = function(content)
+	open_or_goto_curl_tab()
+	local buf = vim.api.nvim_create_buf(false, true)
+	if content then
+		vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(content, "\n"))
+	end
+	vim.api.nvim_set_option_value("filetype", "curl", { buf = buf })
+	vim.api.nvim_set_current_buf(buf)
+end
 return M

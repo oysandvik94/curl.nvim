@@ -11,11 +11,13 @@ vim.api.nvim_buf_set_keymap(
 	{ noremap = true, silent = true }
 )
 
-vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged" }, {
-	command = "silent w",
-	buffer = 0,
-	nested = true,
-})
+if not vim.bo.readonly and vim.fn.filewritable(vim.fn.expand("%")) == 1 then
+	vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged" }, {
+		command = "silent w",
+		buffer = 0,
+		nested = true,
+	})
+end
 
 vim.treesitter.language.register("bash", "curl")
 local bash_lang_installed, _ = pcall(vim.treesitter.get_parser, 0, "bash")

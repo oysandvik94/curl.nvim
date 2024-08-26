@@ -1,6 +1,7 @@
 local M = {}
 
 local api = require("curl.api")
+local buffer = require("curl.buffers")
 local cache = require("curl.cache")
 
 local function extract_collection_name(pattern, args)
@@ -84,6 +85,15 @@ end
 function M.setup(opts)
 	create_curl_open()
 	create_curl_pick()
+
+	vim.api.nvim_create_user_command("GenerateCurl", function()
+		local curl_command = require("curl.java").generate_curl_command()
+		api.open_curl_tab()
+		local current_buf = vim.api.nvim_get_current_buf()
+		local lines = vim.api.nvim_buf_get_lines(current_buf, 0, -1, false)
+		table.insert(lines, curl_command)
+		vim.api.nvim_buf_set_lines(current_buf, 0, -1, false, lines)
+	end, {})
 
 	create_filetype()
 
