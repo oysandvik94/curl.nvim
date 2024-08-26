@@ -35,13 +35,20 @@ local function find_curl_tab_windid()
 end
 
 local function open_or_goto_curl_tab()
-	local tab_win_id = find_curl_tab_windid()
-	if tab_win_id ~= nil then
-		return tab_win_id
-	end
+	local config = require("curl.config")
+	local open_with = config.get("open_with")
 
-	vim.cmd("tabnew")
-	vim.api.nvim_tabpage_set_var(0, "id", TAB_ID)
+	if open_with == "split" then
+		vim.cmd("botright split | wincmd j")
+	else
+		local tab_win_id = find_curl_tab_windid()
+		if tab_win_id ~= nil then
+			return tab_win_id
+		end
+
+		vim.cmd("tabnew")
+		vim.api.nvim_tabpage_set_var(0, "id", TAB_ID)
+	end
 end
 
 local open_command_buffer = function(command_file)

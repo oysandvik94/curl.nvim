@@ -120,6 +120,7 @@ Or if you use [Lazy](https://github.com/folke/lazy.nvim), just pass the table in
   -- Specify an alternative curl binary that will be used to run curl commands
   -- String of either full path, or binary in path
   curl_binary = nil,
+  open_with = "tab" -- use "split" to open in horizontal split
   mappings = {
       execute_curl = "<CR>"
   }
