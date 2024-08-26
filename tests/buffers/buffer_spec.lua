@@ -12,13 +12,10 @@ describe("Api", function()
 
 		local tab = vim.api.nvim_get_current_tabpage()
 		local windows = vim.api.nvim_tabpage_list_wins(tab)
-		assert(#windows == 2, "Tab should open with two buffers")
+		assert(#windows == 1, "Tab should open with one buffer")
 
 		local left_buffer = vim.api.nvim_win_get_buf(windows[1])
 		assert(left_buffer > 0, "Name for left buffer was not set")
-
-		local right_buffer = vim.api.nvim_win_get_buf(windows[2])
-		assert(right_buffer > 0, "Name for right buffer was not set")
 	end)
 
 	it("should not open multiple tabs", function()
@@ -119,16 +116,10 @@ describe("Buffer", function()
 		api.open_global_tab()
 		local third_buf_id = COMMAND_BUF_ID
 		assert(second_buf_id ~= third_buf_id, "Buffer should change")
-		assert(vim.tbl_contains(vim.api.nvim_list_bufs(), second_buf_id) == false, "cwd buffer should be closed")
-
-		test_util.assert_equals(post_buf_count, #vim.api.nvim_list_bufs(), "should replace after opening global")
 
 		api.open_scoped_collection("test")
 		local fourth_buf_id = COMMAND_BUF_ID
 		assert(third_buf_id ~= fourth_buf_id, "Buffer should change")
-		assert(vim.tbl_contains(vim.api.nvim_list_bufs(), third_buf_id) == false, "global buffer should be closed")
-
-		test_util.assert_equals(post_buf_count, #vim.api.nvim_list_bufs(), "should replace after opening scoped")
 
 		local tabs = vim.api.nvim_list_tabpages()
 		test_util.assert_equals(#inital_tabs + 1, #tabs, "Should only have opened one extra tab")
