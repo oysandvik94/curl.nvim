@@ -7,6 +7,40 @@ after_each(function()
 	api.close_curl_tab(true)
 end)
 
+describe("Split option opens split instead of tab", function()
+	local function test_split(open_func, arg)
+		local tabpages_before = #vim.api.nvim_list_tabpages()
+		curl.setup({ open_with = "split" })
+		open_func(arg)
+		local tabpages_after = #vim.api.nvim_list_tabpages()
+
+		test_util.assert_equals(tabpages_before, tabpages_after, "No new tab should be opened")
+
+		local buf_name = vim.api.nvim_buf_get_name(0)
+		local is_curl_file = buf_name:match("%.curl$") ~= nil
+		test_util.assert_equals(is_curl_file, true, "Should open a curl file")
+
+		local windows_open = #vim.api.nvim_tabpage_list_wins(0)
+		test_util.assert_equals(windows_open, 2, "Should split window in 2")
+	end
+
+	it("when using collection scoped", function()
+		test_split(api.open_curl_tab)
+	end)
+
+	it("when using global scoped", function()
+		test_split(api.open_global_tab)
+	end)
+
+	it("when using global collection", function()
+		test_split(api.open_global_collection, "foo")
+	end)
+
+	it("when using scoped collection", function()
+		test_split(api.open_scoped_collection, "bar")
+	end)
+end)
+
 describe("Config", function()
 	it("has default mapping", function()
 		local default_mapping = config.get("mappings")["execute_curl"]
