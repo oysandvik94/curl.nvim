@@ -68,9 +68,11 @@ local format_command_for_curl = function(lines)
 		if found_first_json_char(json_nesting_stack, cleaned_line) then
 			opening_json_char = cleaned_line:sub(1, 1)
 			closing_json_char = opening_json_char == "[" and "]" or "}"
-			is_line_json_close(json_nesting_stack, opening_json_char, closing_json_char, cleaned_line)
-
 			cleaned_line = "'" .. cleaned_line
+
+			if is_line_json_close(json_nesting_stack, opening_json_char, closing_json_char, cleaned_line) then
+				cleaned_line = cleaned_line .. "'"
+			end
 		elseif #json_nesting_stack > 0 then
 			local found_json_end =
 				is_line_json_close(json_nesting_stack, opening_json_char, closing_json_char, cleaned_line)

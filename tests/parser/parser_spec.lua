@@ -225,4 +225,21 @@ describe("Has feature", function()
 			test_util.assert_commands(expected_command, parsed_command)
 		end
 	end)
+
+	it("json content in one line", function()
+		local input_buffer = {
+			"curl -X POST https://jsonplaceholder.typicode.com/posts",
+			"-H 'Content-Type: application/json'",
+			"-d",
+			'{ "title": "now try this" }',
+		}
+
+		local expected_command =
+			"curl -X POST https://jsonplaceholder.typicode.com/posts -H 'Content-Type: application/json' -d '{ \"title\": \"now try this\" }'"
+
+		for index = 1, #input_buffer do
+			local parsed_command = parser.parse_curl_command(index, input_buffer)
+			test_util.assert_commands(expected_command, parsed_command)
+		end
+	end)
 end)
