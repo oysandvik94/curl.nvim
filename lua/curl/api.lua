@@ -6,6 +6,7 @@ local cache = require("curl.cache")
 local buffers = require("curl.buffers")
 local output_parser = require("curl.output_parser")
 local notify = require("curl.notifications")
+local shell = require("curl.shell_utils")
 
 M.create_global_collection = function()
 	vim.ui.input({ prompt = "Collection name: " }, function(input)
@@ -110,7 +111,14 @@ M.execute_curl = function()
 	local output = ""
 	local error = ""
 
-	local _ = vim.fn.jobstart(curl_command, {
+	local commands = shell.get_default_shell()
+	if commands ~= nil and type(commands) == "table" then
+		table.insert(commands, curl_command)
+	else
+		commands = curl_command
+	end
+
+	local _ = vim.fn.jobstart(commands, {
 		on_exit = function(_, exit_code, _)
 			if exit_code ~= 0 then
 				notify.error("Curl failed")
