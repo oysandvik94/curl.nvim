@@ -11,7 +11,7 @@ describe("Api", function()
 		local curl_command = "curl localhost:8000"
 
 		local mocked_jobstart = function(command, callback)
-			test_util.assert_equals(curl_command .. " -sSL", command)
+			test_util.assert_equals(curl_command .. " -sSL", command[#command])
 
 			buffers.set_output_buffer_content(0, { "test" })
 		end
