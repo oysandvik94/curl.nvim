@@ -29,8 +29,9 @@ describe("Config", function()
 
 		local curl_command = "curl localhost:8000"
 
+    -- stylua: ignore
 		local mocked_jobstart = function(command, _)
-			test_util.assert_equals(curl_command .. " -sSL -i", command, "Default flag should be added")
+			test_util.assert_equals(curl_command .. " -sSL -i", command[#command], "Default flag should be added")
 		end
 		local mock_pre = vim.fn.jobstart
 		vim.fn.jobstart = mocked_jobstart
@@ -49,8 +50,9 @@ describe("Config", function()
 
 		local curl_command = "curl localhost:8000"
 
+    -- stylua: ignore
 		local mocked_jobstart = function(command, _)
-			test_util.assert_equals(curl_alias .. " localhost:8000 -sSL", command, "Curl alias should be used")
+			test_util.assert_equals(curl_alias .. " localhost:8000 -sSL", command[#command], "Curl alias should be used")
 		end
 		local mock_pre = vim.fn.jobstart
 		vim.fn.jobstart = mocked_jobstart
@@ -69,8 +71,9 @@ describe("Config", function()
 
 		local curl_command = "curl localhost:8000"
 
+    -- stylua: ignore
 		local mocked_jobstart = function(command, _)
-			test_util.assert_equals(curl_alias .. " localhost:8000 -sSL", command, "Curl alias should be used")
+			test_util.assert_equals(curl_alias .. " localhost:8000 -sSL", command[#command], "Curl alias should be used")
 		end
 		local mock_pre = vim.fn.jobstart
 		vim.fn.jobstart = mocked_jobstart
