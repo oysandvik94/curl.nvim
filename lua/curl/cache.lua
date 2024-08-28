@@ -1,5 +1,6 @@
 local M = {}
 local Path = require("plenary.path")
+local notify = require("curl.notifications")
 
 ---comment
 ---@param global boolean
@@ -21,7 +22,10 @@ local curl_cache_dir = function(custom_dir)
 		cache_dir = cache_dir / custom_dir ---@type Path
 	end
 
-	cache_dir:mkdir({ parents = true, exists_ok = true })
+	if vim.fn.mkdir(cache_dir:absolute(), "p") ~= 1 then
+		notify.error("create directory error: " .. cache_dir:absolute())
+	end
+
 	return cache_dir
 end
 
