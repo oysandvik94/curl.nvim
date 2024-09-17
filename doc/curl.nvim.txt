@@ -1,4 +1,4 @@
-*curl.nvim.txt*           For NVIM v0.8.0          Last change: 2024 August 28
+*curl.nvim.txt*         For NVIM v0.8.0         Last change: 2024 September 17
 
 ==============================================================================
 Table of Contents                                *curl.nvim-table-of-contents*
@@ -131,6 +131,7 @@ Default Config ~
       -- Specify an alternative curl binary that will be used to run curl commands
       -- String of either full path, or binary in path
       curl_binary = nil,
+      open_with = "tab" -- use "split" to open in horizontal split
       mappings = {
           execute_curl = "<CR>"
       }
