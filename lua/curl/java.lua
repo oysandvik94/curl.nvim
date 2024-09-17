@@ -4,6 +4,9 @@ local M = {}
 ---@param arg_node TSNode
 local function parse_annotation_arguments(arg_node, key)
 	for node, _ in arg_node:iter_children() do
+		if node:type() == "string_literal" then
+			return vim.treesitter.get_node_text(node, 0):gsub('"', "")
+		end
 		if node:type() == "element_value_pair" then
 			for pair_node, field in node:iter_children() do
 				if field == "key" then
@@ -62,6 +65,10 @@ local function parse_annotation(annotation_node)
 
 		if field == "arguments" then
 			path = parse_annotation_arguments(node, "path")
+
+			if path == nil then
+				path = parse_annotation_arguments(node, "value")
+			end
 		end
 	end
 
