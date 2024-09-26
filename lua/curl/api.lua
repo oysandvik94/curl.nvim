@@ -142,4 +142,33 @@ M.set_curl_binary = function(binary_name)
 	config.set("curl_binary", binary_name)
 end
 
+M.toggle_curl_tab = function()
+	if M.is_curl_tab_open() then
+		M.close_curl_tab()
+	else
+		M.open_curl_tab()
+	end
+end
+
+M.toggle_global_curl_tab = function()
+	if M.is_curl_tab_open() then
+		M.close_curl_tab()
+	else
+		M.open_global_tab()
+	end
+end
+
+M.is_curl_tab_open = function()
+	for _, tab in ipairs(vim.api.nvim_list_tabpages()) do
+		local success, tab_id = pcall(function()
+			return vim.api.nvim_tabpage_get_var(tab, "id")
+		end)
+
+		if success and tab_id == "curl.nvim.tab" then
+			return true
+		end
+	end
+	return false
+end
+
 return M
