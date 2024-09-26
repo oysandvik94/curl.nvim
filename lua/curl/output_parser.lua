@@ -55,10 +55,28 @@ local function extract_json(output_lines)
 	return header_lines, json_string
 end
 
+local function extract_custom_format(output_lines, custom_format)
+	local formatted_result = {}
+	local in_custom_format = false
+
+	for _, line in ipairs(output_lines) do
+		if line:match("<custom>") then
+			in_custom_format = true
+		elseif line:match("</custom>") then
+			in_custom_format = false
+		elseif in_custom_format then
+			table.insert(formatted_result, line)
+		end
+	end
+
+	return formatted_result
+end
+
 ---
 ---@param curl_standard_out string
+---@param custom_format string
 ---@return table
-M.parse_curl_output = function(curl_standard_out)
+M.parse_curl_output = function(curl_standard_out, custom_format)
 	if is_json_start(curl_standard_out) then
 		return run_jq(curl_standard_out)
 	end
@@ -72,6 +90,14 @@ M.parse_curl_output = function(curl_standard_out)
 
 	local json_lines = run_jq(json_string)
 	table.move(json_lines, 1, #json_lines, #header_lines + 1, header_lines)
+
+	if custom_format then
+		local formatted_result = extract_custom_format(output_table, custom_format)
+		table.insert(header_lines, "")
+		vim.list_extend(header_lines, formatted_result)
+	end
+
 	return header_lines
 end
+
 return M

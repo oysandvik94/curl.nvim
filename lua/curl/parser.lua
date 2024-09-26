@@ -157,7 +157,15 @@ M.parse_curl_command = function(cursor_pos, lines)
 		table.insert(selection, flag)
 	end
 
-	return vim.fn.join(selection, " ")
+	local curl_command = vim.fn.join(selection, " ")
+
+	local custom_format = nil
+	local write_out_flag = curl_command:match("%-w%s+([^\n]+)")
+	if write_out_flag then
+		custom_format = write_out_flag
+	end
+
+	return curl_command, custom_format
 end
 
 return M
