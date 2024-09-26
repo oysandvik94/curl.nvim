@@ -81,9 +81,20 @@ local create_filetype = function()
 	})
 end
 
+local create_curl_toggle = function()
+	vim.api.nvim_create_user_command("CurlToggle", function()
+		api.toggle_curl_tab()
+	end, { desc = "Toggle curl tab" })
+
+	vim.api.nvim_create_user_command("CurlToggleGlobal", function()
+		api.toggle_global_curl_tab()
+	end, { desc = "Toggle global curl tab" })
+end
+
 function M.setup(opts)
 	create_curl_open()
 	create_curl_pick()
+	create_curl_toggle()
 
 	create_filetype()
 

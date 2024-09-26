@@ -64,4 +64,30 @@ describe("Api", function()
 		local new_bufname = vim.api.nvim_buf_get_name(0)
 		assert(new_bufname:find("global") == nil, "Buffer should be closed")
 	end)
+
+	it("can toggle curl tab", function()
+		api.toggle_curl_tab()
+		assert(api.is_curl_tab_open(), "Curl tab should be open")
+
+		api.toggle_curl_tab()
+		assert(not api.is_curl_tab_open(), "Curl tab should be closed")
+	end)
+
+	it("can toggle global curl tab", function()
+		api.toggle_global_curl_tab()
+		assert(api.is_curl_tab_open(), "Global curl tab should be open")
+
+		api.toggle_global_curl_tab()
+		assert(not api.is_curl_tab_open(), "Global curl tab should be closed")
+	end)
+
+	it("can check if curl tab is open", function()
+		assert(not api.is_curl_tab_open(), "Curl tab should be closed initially")
+
+		api.open_curl_tab()
+		assert(api.is_curl_tab_open(), "Curl tab should be open")
+
+		api.close_curl_tab()
+		assert(not api.is_curl_tab_open(), "Curl tab should be closed")
+	end)
 end)
