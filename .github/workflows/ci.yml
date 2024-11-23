@@ -24,7 +24,7 @@ jobs:
         run: |
           nvim --version
           [ ! -d tests ] && exit 0
-          ./tests/run
+          make test
   docs:
     if: github.ref == 'refs/heads/main'
     permissions:

@@ -67,4 +67,4 @@ The first and last line is the boundary for the curl command.
 
 Tests can be run like this:
 
-`./test/run`
+`make test`
