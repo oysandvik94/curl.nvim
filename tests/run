@@ -1,4 +1,0 @@
-#!/bin/sh
-
-rm -rf .tests/data/nvim/curl_cache
-nvim -l tests/busted.lua tests -o utfTerminal
