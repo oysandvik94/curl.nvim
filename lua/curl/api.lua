@@ -1,6 +1,7 @@
 local M = {}
 
 local parser = require("curl.parser")
+local state = require("curl.state")
 local config = require("curl.config")
 local cache = require("curl.cache")
 local buffers = require("curl.buffers")
@@ -127,6 +128,11 @@ M.execute_curl = function()
       end
 
       local parsed_output = output_parser.parse_curl_output(output)
+
+      if curl_command.variable ~= nil then
+        state.store_value(curl_command.variable, parsed_output.response)
+      end
+
       buffers.set_output_buffer_content(executed_from_win, parsed_output)
     end,
     on_stdout = function(_, data, _)

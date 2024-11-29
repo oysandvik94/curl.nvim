@@ -138,9 +138,11 @@ T["Buffer"]["should output to right buffer"] = function()
      ]])
 
   local lines = {
-    "1",
-    "2",
-    "3",
+    response = {
+      "1",
+      "2",
+      "3",
+    },
   }
 
   local cur_win = vim.api.nvim_get_current_win()
