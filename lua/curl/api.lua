@@ -123,7 +123,7 @@ M.execute_curl = function()
     on_exit = function(_, exit_code, _)
       if exit_code ~= 0 then
         notify.error("Curl failed")
-        buffers.set_output_buffer_content(executed_from_win, vim.split(error, "\n"))
+        buffers.set_error_buffer_content(executed_from_win, error)
         return
       end
 

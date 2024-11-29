@@ -151,4 +151,13 @@ M.set_output_buffer_content = function(executed_from_win, content)
   vim.api.nvim_buf_set_lines(OUTPUT_BUF_ID, 0, -1, false, flattened)
 end
 
+---comment
+---@param executed_from_win number
+---@param content table
+M.set_error_buffer_content = function(executed_from_win, content)
+  open_result_buffer(executed_from_win)
+
+  vim.api.nvim_buf_set_lines(OUTPUT_BUF_ID, 0, -1, false, { content })
+end
+
 return M

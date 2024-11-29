@@ -2,6 +2,7 @@ local M = {}
 
 local config = require("curl.config")
 local tokenizer = require("curl.tokenizer")
+local state = require("curl.state")
 
 local highlight_curl_command = function(start_pos, end_pos)
   local ns_id = vim.api.nvim_create_namespace("curl_command_highlight")
@@ -145,8 +146,24 @@ M.parse_curl_command = function(cursor_pos, lines)
 
   local selection = {}
   for i = first_line, last_line do
+    local line_to_add = cleaned_lines[i]
     if not is_commented(cleaned_lines[i]) then
-      table.insert(selection, cleaned_lines[i])
+      for placeholder in string.gmatch(cleaned_lines[i], "%${(.-)}") do
+        vim.print("found plcaeholder")
+        local main_key, sub_key = placeholder:match("([^%.]+)%.([^%.]+)")
+        if main_key and sub_key then
+          vim.print("found key: " .. main_key)
+          vim.print("found subkey: " .. sub_key)
+          local value = state.get_value(main_key)
+          if value and value[sub_key] then
+            vim.print("found value")
+            line_to_add = line_to_add:gsub("%${" .. placeholder .. "}", value[sub_key])
+            table.insert(selection, line_to_add)
+          end
+        end
+      end
+
+      table.insert(selection, line_to_add)
     end
   end
 
