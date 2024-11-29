@@ -1,6 +1,7 @@
 local M = {}
 
 local config = require("curl.config")
+local tokenizer = require("curl.tokenizer")
 
 local highlight_curl_command = function(start_pos, end_pos)
   local ns_id = vim.api.nvim_create_namespace("curl_command_highlight")
@@ -126,77 +127,10 @@ find_forwards = function(current_pos, lines)
   return find_forwards(next_pos, lines)
 end
 
----@class CurlTokens
----@field  boolean
----@field cond? boolean
----@field dep? boolean True if this plugin is only in the spec as a dependency
----@field dir? string Explicit dir or dev set for this plugin
----@field dirty? boolean
----@field build? boolean
----@field frags? number[]
----@field handlers? LazyPluginHandlers
----@field installed? boolean
----@field is_local? boolean
----@field kind? LazyPluginKind
----@field loaded? {[string]:string}|{time:number}
----@field outdated? boolean
----@field rtp_loaded? boolean
----@field tasks? LazyTask[]
----@field updated? {from:string, to:string}
----@field updates? {from:GitInfo, to:GitInfo}
----@field last_check? number
----@field working? boolean
----@field pkg? LazyPkg
-
 ---comment
----@param input string
----@return table
-M.tokenize = function(input)
-  local tokens = {
-    command = "",
-    variable = "",
-  }
-
-  local curl = "curl"
-
-  local buffer = ""
-  local i = 1
-  while i <= #input do
-    local char = input:sub(i, i)
-
-    buffer = buffer .. char
-
-    if buffer == "const" then
-      i = i + 1
-      local should_be_whitespace = input:sub(i, i)
-      if should_be_whitespace ~= " " then
-        error("'const' should be followed by whitespace")
-      end
-
-      local keyword_buffer = ""
-      i = i + 1
-      local inner_char = input:sub(i, i)
-
-      while inner_char ~= " " do
-        i = i + 1
-        inner_char = input:sub(i, i)
-      end
-    end
-
-    if buffer == curl then
-      local rest_of_curl = input:sub(i, -1)
-      tokens.command = curl .. rest_of_curl
-      return tokens
-    end
-
-    i = i + 1
-  end
-
-  -- Parsing logic to populate the tokens table would go here
-
-  return tokens
-end
-
+---@param cursor_pos number
+---@param lines table
+---@return CurlTokens
 M.parse_curl_command = function(cursor_pos, lines)
   if #lines == 0 then
     return ""
@@ -220,8 +154,6 @@ M.parse_curl_command = function(cursor_pos, lines)
     return ""
   end
 
-  -- tokenize(selection)
-
   table.insert(selection, "-sSL")
 
   ---@for _ int, flag string in ipairs
@@ -229,7 +161,9 @@ M.parse_curl_command = function(cursor_pos, lines)
     table.insert(selection, flag)
   end
 
-  return vim.fn.join(selection, " ")
+  local tokenized_result = tokenizer.tokenize(table.concat(selection, " "))
+
+  return tokenized_result
 end
 
 return M

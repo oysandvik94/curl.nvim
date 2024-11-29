@@ -6,7 +6,7 @@ M.assert_commands = function(expected, received)
     expected_silenced = expected .. " -sSL"
   end
 
-  M.assert_equals(expected_silenced, received)
+  M.assert_equals(expected_silenced, received.command)
 end
 
 M.assert_equals = function(expected, received, message)

@@ -8,7 +8,7 @@ describe("Able to parse simple buffer", function()
 
     local parsed_command = parser.parse_curl_command(cursor_pos, input_buffer)
 
-    test_util.assert_commands("", parsed_command)
+    test_util.assert_commands("", parsed_command.command)
   end)
 
   it("containing one curl command", function()
@@ -20,7 +20,7 @@ describe("Able to parse simple buffer", function()
     local parsed_command = parser.parse_curl_command(cursor_pos, input_buffer)
 
     local expected_curl_command = "curl https://jsonplaceholder.typicode.com/todos/1"
-    test_util.assert_commands(expected_curl_command, parsed_command)
+    test_util.assert_commands(expected_curl_command, parsed_command.command)
   end)
 
   it("containing many curl commands", function()
@@ -33,7 +33,7 @@ describe("Able to parse simple buffer", function()
     for index, curl_line in ipairs(input_buffer) do
       local parsed_command = parser.parse_curl_command(index, input_buffer)
 
-      test_util.assert_commands(curl_line, parsed_command)
+      test_util.assert_commands(curl_line, parsed_command.command)
     end
   end)
 
