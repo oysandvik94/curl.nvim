@@ -4,8 +4,8 @@ local default_config = {
 	default_flags = {},
 	---@type string
 	curl_binary = nil,
-	---@type "tab"|"split"
-	open_with = "tab", -- tab or split
+	---@type "tab"|"split"|"vsplit"
+	open_with = "tab", -- tab or (v)split
 	---@type table<'execute_curl', string>
 	mappings = {
 		execute_curl = "<CR>",
