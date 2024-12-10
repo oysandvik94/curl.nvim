@@ -40,6 +40,8 @@ local function open_or_goto_curl_tab()
 
 	if open_with == "split" then
 		vim.cmd("botright split | wincmd j")
+	elseif open_with == "vsplit" then
+		vim.cmd("vsplit | wincmd l")
 	else
 		local tab_win_id = find_curl_tab_windid()
 		if tab_win_id ~= nil then
