@@ -123,7 +123,7 @@ Or if you use [Lazy](https://github.com/folke/lazy.nvim), just pass the table in
   -- Specify how to open curl
   -- use "tab" to open in separate tab
   -- use "split" to open in horizontal split
-  -- use "split" to open in vertical split
+  -- use "vsplit" to open in vertical split
   open_with = "tab"
   mappings = {
     execute_curl = "<CR>"
@@ -164,7 +164,7 @@ curl -X POST https://jsonplaceholder.typicode.com/posts
 
 #### No trailing \\
 
-You dont need a trailing \\, but it wont matter if they are there, making it easier to copy-paste requests
+You dont need a trailing \\, but it won't matter if they are there, making it easier to copy-paste requests
 
 <details>
 <summary>See example</summary>
@@ -318,7 +318,7 @@ curl.set_curl_binary("someothercurl")
 
 </details>
 
-## Troublshooting
+## Troubleshooting
 
 ### DAP
 
