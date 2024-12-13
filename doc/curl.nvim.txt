@@ -1,4 +1,4 @@
-*curl.nvim.txt*          For NVIM v0.8.0         Last change: 2024 November 23
+*curl.nvim.txt*          For NVIM v0.8.0         Last change: 2024 December 13
 
 ==============================================================================
 Table of Contents                                *curl.nvim-table-of-contents*
@@ -7,7 +7,7 @@ Table of Contents                                *curl.nvim-table-of-contents*
   - Configuration                                    |curl.nvim-configuration|
   - Features                                              |curl.nvim-features|
   - Lua api                                                |curl.nvim-lua-api|
-  - Troublshooting                                  |curl.nvim-troublshooting|
+  - Troubleshooting                                |curl.nvim-troubleshooting|
   - Future plans                                      |curl.nvim-future-plans|
   - Similar plugins                                |curl.nvim-similar-plugins|
   - Contributing                                      |curl.nvim-contributing|
@@ -127,13 +127,17 @@ Default Config ~
 >lua
     {
       -- Table of strings to specify default headers to be included in each request, i.e. "-i"
-      default_flags = { },
+      default_flags = {},
       -- Specify an alternative curl binary that will be used to run curl commands
       -- String of either full path, or binary in path
       curl_binary = nil,
-      open_with = "tab" -- use "split" to open in horizontal split
+      -- Specify how to open curl
+      -- use "tab" to open in separate tab
+      -- use "split" to open in horizontal split
+      -- use "vsplit" to open in vertical split
+      open_with = "tab"
       mappings = {
-          execute_curl = "<CR>"
+        execute_curl = "<CR>"
       }
     }
 <
@@ -173,7 +177,7 @@ See example ~
 
 NO TRAILING \
 
-You dont need a trailing \, but it wont matter if they are there, making it
+You dont need a trailing \, but it won’t matter if they are there, making it
 easier to copy-paste requests
 
 See example ~
@@ -327,7 +331,7 @@ See lua api ~
 <
 
 
-TROUBLSHOOTING                                      *curl.nvim-troublshooting*
+TROUBLESHOOTING                                    *curl.nvim-troubleshooting*
 
 
 DAP ~
