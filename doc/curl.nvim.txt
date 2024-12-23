@@ -1,4 +1,4 @@
-*curl.nvim.txt*          For NVIM v0.8.0         Last change: 2024 December 13
+*curl.nvim.txt*          For NVIM v0.8.0         Last change: 2024 December 23
 
 ==============================================================================
 Table of Contents                                *curl.nvim-table-of-contents*
