@@ -8,7 +8,7 @@ vim.api.nvim_buf_set_keymap(
 	"n",
 	execute_mapping,
 	"<cmd>lua require('curl.api').execute_curl()<CR>",
-	{ noremap = true, silent = true }
+	{ noremap = true, silent = true, desc = "Execute Curl" }
 )
 
 vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged" }, {
