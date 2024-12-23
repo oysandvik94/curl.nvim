@@ -277,6 +277,40 @@ In the future, I (or someone else) might create a dedicated telescope/fzf
 picker to get features like preview enabled.
 
 
+WRITE-OUT OPTION ~
+
+The plugin now supports the `curl --write-out` option with custom formats. You can define a format file (or an inline format) in the config, or the plugin detects the `-w` flag in the curl file, and outputs the formatted result, maybe in the top of the output buffer, just like how headers are shown for the `-i` flag.
+
+See example ~
+
+>bash
+    curl -XGET https://jsonplaceholder.typicode.com/todos
+    -H "Content-Type: application/json"
+    -w "totalTime: %{time_total}"
+<
+
+This will give the results in a single line, with the custom format at the end of it.
+
+You can also use a format file:
+
+>bash
+    curl -w "@curl-filename.txt" https://example.com
+<
+
+Where `curl-filename.txt` contains:
+
+>text
+    time_namelookup: %{time_namelookup}\n
+    time_connect: %{time_connect}\n
+    time_appconnect: %{time_appconnect}\n
+    time_pretransfer: %{time_pretransfer}\n
+    time_redirect: %{time_redirect}\n
+    time_starttransfer: %{time_starttransfer}\n
+    ———\n
+    time_total: %{time_total}\n
+<
+
+
 LUA API                                                    *curl.nvim-lua-api*
 
 This section describes all the methods in the exposed lua api

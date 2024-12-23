@@ -3,7 +3,7 @@
   
 # curl.nvim
   
-💪 Integrate curl and jq in Neovim. 💪
+� Integrate curl and jq in Neovim. �
 
 </div>
 
@@ -133,16 +133,16 @@ Or if you use [Lazy](https://github.com/folke/lazy.nvim), just pass the table in
 
 </details>
 
-## ✨ Features
+## � Features
 
-### 💪 .curl filetype
+### � .curl filetype
 
 Opening any file with the ".curl" file extension will activate this plugins features.
 You will get some syntax highlighting and the ability to execute curl commands from you buffer.
 Since any ".curl" file will work, you can manage your own collection instead of using the builtin
 system, and even check in files to your repository.
 
-### 💪 Formatting
+### � Formatting
 
 #### No quotes needed
 
@@ -197,7 +197,7 @@ curl -X POST https://jsonplaceholder.typicode.com/posts
 
 </details>
 
-### 💪 Headers
+### � Headers
 
 Basic auth and bearer tokens work, and can be retrieved from environment variables
 
@@ -219,7 +219,7 @@ curl -X GET "https://httpbin.org/bearer" -H "accept: application/json" -H "Autho
 
 </details>
 
-### 💪 Collections
+### � Collections
 
 There are multiple ways to work with the scratch buffers, so you can tailor it to your own workflow.
 By default, running ":CurlOpen" will open a command buffer that is tied to your current working directory.
@@ -261,6 +261,42 @@ This might be the neovim default picker, or telescope/fzf-lua if configured. See
 
 In the future, I (or someone else) might create a dedicated telescope/fzf picker to get features
 like preview enabled.
+
+### 💪 Write-out option
+
+The plugin now supports the `curl --write-out` option with custom formats. You can define a format file (or an inline format) in the config, or the plugin detects the `-w` flag in the curl file, and outputs the formatted result, maybe in the top of the output buffer, just like how headers are shown for the `-i` flag.
+
+<details>
+<summary>See example</summary>
+
+```bash
+curl -XGET https://jsonplaceholder.typicode.com/todos
+-H "Content-Type: application/json"
+-w "totalTime: %{time_total}"
+```
+
+This will give the results in a single line, with the custom format at the end of it.
+
+You can also use a format file:
+
+```bash
+curl -w "@curl-filename.txt" https://example.com
+```
+
+Where `curl-filename.txt` contains:
+
+```
+time_namelookup: %{time_namelookup}\n
+time_connect: %{time_connect}\n
+time_appconnect: %{time_appconnect}\n
+time_pretransfer: %{time_pretransfer}\n
+time_redirect: %{time_redirect}\n
+time_starttransfer: %{time_starttransfer}\n
+———\n
+time_total: %{time_total}\n
+```
+
+</details>
 
 ## Lua api
 

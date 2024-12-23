@@ -118,6 +118,12 @@ M.execute_curl = function()
 		commands = curl_command
 	end
 
+	local custom_format = nil
+	local write_out_flag = curl_command:match("%-w%s+([^\n]+)")
+	if write_out_flag then
+		custom_format = write_out_flag
+	end
+
 	local _ = vim.fn.jobstart(commands, {
 		on_exit = function(_, exit_code, _)
 			if exit_code ~= 0 then
@@ -126,7 +132,7 @@ M.execute_curl = function()
 				return
 			end
 
-			local parsed_output = output_parser.parse_curl_output(output)
+			local parsed_output = output_parser.parse_curl_output(output, custom_format)
 			buffers.set_output_buffer_content(executed_from_win, parsed_output)
 		end,
 		on_stdout = function(_, data, _)
