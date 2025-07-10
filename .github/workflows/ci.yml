@@ -16,6 +16,7 @@ jobs:
         run: |
           mkdir -p _neovim
           curl -sL "https://github.com/neovim/neovim/releases/download/v0.11.2/nvim-linux-x86_64.tar.gz" | tar xzf - --strip-components=1 -C "${PWD}/_neovim"
+          export PATH="${PWD}/_neovim/bin:${PATH}"
       - name: Run Tests
         run: |
           nvim --version
