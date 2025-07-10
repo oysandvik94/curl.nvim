@@ -14,14 +14,12 @@ jobs:
       - name: Install Neovim
         shell: bash
         run: |
-          mkdir -p /tmp/nvim
-          wget -q https://github.com/neovim/neovim/releases/download/stable/nvim.appimage -O /tmp/nvim/nvim.appimage
-          cd /tmp/nvim
-          chmod a+x ./nvim.appimage
-          ./nvim.appimage --appimage-extract
-          echo "/tmp/nvim/squashfs-root/usr/bin/" >> $GITHUB_PATH
+          mkdir -p _neovim
+          curl -sL "https://github.com/neovim/neovim/releases/download/v0.11.2/nvim-linux-x86_64.tar.gz" | tar xzf - --strip-components=1 -C "${PWD}/_neovim"
+          export PATH="${PWD}/_neovim/bin:${PATH}"
       - name: Run Tests
         run: |
+          export PATH="${PWD}/_neovim/bin:${PATH}"
           nvim --version
           [ ! -d tests ] && exit 0
           make test

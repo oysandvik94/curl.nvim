@@ -6,6 +6,8 @@ local default_config = {
 	curl_binary = nil,
 	---@type "tab"|"split"|"vsplit"
 	open_with = "tab", -- tab or (v)split
+	---@type "vertical"|"horizontal"
+	output_split_direction = "vertical", -- how to split the output buffer
 	---@type table<'execute_curl', string>
 	mappings = {
 		execute_curl = "<CR>",

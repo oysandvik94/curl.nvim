@@ -124,7 +124,11 @@ Or if you use [Lazy](https://github.com/folke/lazy.nvim), just pass the table in
   -- use "tab" to open in separate tab
   -- use "split" to open in horizontal split
   -- use "vsplit" to open in vertical split
-  open_with = "tab"
+  open_with = "tab",
+  -- Specify how to split the output buffer (when open_with is not "tab")
+  -- use "vertical" for vertical split (default)
+  -- use "horizontal" for horizontal split
+  output_split_direction = "vertical",
   mappings = {
     execute_curl = "<CR>"
   }
