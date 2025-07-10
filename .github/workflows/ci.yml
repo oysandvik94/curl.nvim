@@ -19,6 +19,7 @@ jobs:
           export PATH="${PWD}/_neovim/bin:${PATH}"
       - name: Run Tests
         run: |
+          export PATH="${PWD}/_neovim/bin:${PATH}"
           nvim --version
           [ ! -d tests ] && exit 0
           make test
