@@ -93,9 +93,13 @@ local open_result_buffer = function(called_from_win_id)
 		return
 	end
 
+	local config = require("curl.config")
+	local output_split_direction = config.get("output_split_direction")
+	local split_cmd = output_split_direction == "horizontal" and "belowright sb" or "vert belowright sb"
+
 	if buf_is_open(open_resbuf_name) then
 		local bufnr = vim.fn.bufnr(open_resbuf_name, false)
-		vim.cmd("vert belowright sb" .. bufnr .. " | wincmd p")
+		vim.cmd(split_cmd .. bufnr .. " | wincmd p")
 		OUTPUT_BUF_ID = bufnr
 		return
 	end
@@ -104,7 +108,7 @@ local open_result_buffer = function(called_from_win_id)
 	vim.api.nvim_buf_set_name(new_bufnr, open_resbuf_name)
 	vim.api.nvim_set_option_value("filetype", "json", { buf = new_bufnr })
 	vim.api.nvim_set_option_value("buftype", "nofile", { buf = new_bufnr })
-	vim.cmd("vert belowright sb" .. new_bufnr .. " | wincmd p")
+	vim.cmd(split_cmd .. new_bufnr .. " | wincmd p")
 	OUTPUT_BUF_ID = new_bufnr
 end
 
