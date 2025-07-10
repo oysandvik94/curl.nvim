@@ -1,4 +1,4 @@
-*curl.nvim.txt*          For NVIM v0.8.0         Last change: 2024 December 23
+*curl.nvim.txt*            For NVIM v0.8.0           Last change: 2025 July 10
 
 ==============================================================================
 Table of Contents                                *curl.nvim-table-of-contents*
@@ -135,7 +135,11 @@ Default Config ~
       -- use "tab" to open in separate tab
       -- use "split" to open in horizontal split
       -- use "vsplit" to open in vertical split
-      open_with = "tab"
+      open_with = "tab",
+      -- Specify how to split the output buffer (when open_with is not "tab")
+      -- use "vertical" for vertical split (default)
+      -- use "horizontal" for horizontal split
+      output_split_direction = "vertical",
       mappings = {
         execute_curl = "<CR>"
       }
