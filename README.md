@@ -124,6 +124,7 @@ Or if you use [Lazy](https://github.com/folke/lazy.nvim), just pass the table in
   -- use "tab" to open in separate tab
   -- use "split" to open in horizontal split
   -- use "vsplit" to open in vertical split
+  -- use "buffer" to open in new buffer
   open_with = "tab",
   -- Specify how to split the output buffer (when open_with is not "tab")
   -- use "vertical" for vertical split (default)
@@ -197,6 +198,23 @@ curl -X POST https://jsonplaceholder.typicode.com/posts
   # "title": "remember me"
   "title": "now try this"
 }
+```
+
+</details>
+
+### 💪 Variables
+Environment variables can be stted in file with `---variable_name=value` syntax
+
+<details>
+<summary>See example</summary>
+
+```bash
+---baseurl=http://127.0.0.1:8000
+
+curl $baseurl/collections
+
+---collection_name=test
+curl $baseurl/collections/$collection_name
 ```
 
 </details>
