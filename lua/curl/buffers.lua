@@ -114,6 +114,18 @@ local open_result_buffer = function(called_from_win_id)
 	OUTPUT_BUF_ID = new_bufnr
 end
 
+---sets envs from parsed lines output
+---in style like `---var=val`
+---@param lines [string]
+M.setup_buf_vars = function(lines)
+  for _, line in ipairs(lines) do
+    local k,v = line:match("^%s*%-%-%-%s*([^=]+)=(.*)")
+    if k and v then
+      vim.env[k] = v
+    end
+  end
+end
+
 M.setup_curl_tab_for_file = function(filename)
 	open_or_goto_curl_tab()
 
