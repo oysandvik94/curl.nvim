@@ -119,12 +119,22 @@ M.execute_curl = function()
 		commands = curl_command
 	end
 
+	local start_time = vim.uv.hrtime()
+
 	local _ = vim.fn.jobstart(commands, {
 		on_exit = function(_, exit_code, _)
 			if exit_code ~= 0 then
 				notify.error("Curl failed")
 				buffers.set_output_buffer_content(executed_from_win, vim.split(error, "\n"))
 				return
+			end
+
+			local show_request_duration = config.get().show_request_duration_limit
+			if show_request_duration then
+				local elapsed = (vim.uv.hrtime() - start_time) / 1e9
+				if elapsed > show_request_duration then
+					print(string.format("Request took %.3f seconds", elapsed))
+				end
 			end
 
 			local parsed_output = output_parser.parse_curl_output(output)
