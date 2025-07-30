@@ -4,8 +4,8 @@ local default_config = {
 	default_flags = {},
 	---@type string
 	curl_binary = nil,
-	---@type "tab"|"split"|"vsplit"
-	open_with = "tab", -- tab or (v)split
+	---@type "tab"|"split"|"vsplit"|"buffer"
+	open_with = "tab", -- tab or (v)split or buffer
 	---@type "vertical"|"horizontal"
 	output_split_direction = "vertical", -- how to split the output buffer
 	---@type table<'execute_curl', string>
