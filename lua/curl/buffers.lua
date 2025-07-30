@@ -43,7 +43,7 @@ local function open_or_goto_curl_tab()
 	elseif open_with == "vsplit" then
 		vim.cmd("botright vsplit | wincmd l")
 	elseif open_with == "buffer" then
-    return
+		return
 	else
 		local tab_win_id = find_curl_tab_windid()
 		if tab_win_id ~= nil then
@@ -118,12 +118,12 @@ end
 ---in style like `---var=val`
 ---@param lines [string]
 M.setup_buf_vars = function(lines)
-  for _, line in ipairs(lines) do
-    local k,v = line:match("^%s*%-%-%-%s*([^=]+)=(.*)")
-    if k and v then
-      vim.env[k] = v
-    end
-  end
+	for _, line in ipairs(lines) do
+		local k,v = line:match("^%s*%-%-%-%s*([^=]+)=(.*)")
+		if k and v then
+			vim.env[k] = v
+		end
+	end
 end
 
 M.setup_curl_tab_for_file = function(filename)
