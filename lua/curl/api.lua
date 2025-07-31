@@ -110,7 +110,7 @@ M.execute_curl = function()
 
 	local output = ""
 	local error = ""
-	buffers.setup_buf_vars(lines)
+	buffers.setup_buf_vars(lines, cursor_pos)
 
 	local commands = shell.get_default_shell()
 	if commands ~= nil and type(commands) == "table" then
