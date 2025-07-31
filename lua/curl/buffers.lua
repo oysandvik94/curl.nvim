@@ -117,9 +117,13 @@ end
 ---sets envs from parsed lines output
 ---in style like `---var=val`
 ---@param lines [string]
-M.setup_buf_vars = function(lines)
-	for _, line in ipairs(lines) do
-		local k,v = line:match("^%s*%-%-%-%s*([^=]+)=(.*)")
+---@param upper_bound integer | nil
+M.setup_buf_vars = function(lines, upper_bound)
+	upper_bound = upper_bound or #lines
+	for idx = 1, upper_bound do
+		local line = lines[idx]
+		if not line then break end
+		local k, v = line:match("^%s*%-%-%-%s*([^=]+)=(.*)")
 		if k and v then
 			vim.env[k] = v
 		end
