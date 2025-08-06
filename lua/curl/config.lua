@@ -2,8 +2,8 @@
 local default_config = {
 	---@type table<string>
 	default_flags = {},
-  ---@type integer | nil
-  show_request_duration_limit = nil, -- show elapsed time if request duration exceeds this limit; don't show if nil
+	---@type integer | nil
+	show_request_duration_limit = nil, -- show elapsed time if request duration exceeds this limit; don't show if nil
 	---@type string
 	curl_binary = nil,
 	---@type "tab"|"split"|"vsplit"|"buffer"
