@@ -37,7 +37,7 @@ M.add_treesitter_highlighting = function()
 		elseif name == "curl_option" or name == "http_method" then
 			vim.api.nvim_buf_add_highlight(bufnr, -1, "CurlFunction", start_row, start_col, end_col)
 		elseif name == "custom_var" then
-      vim.api.nvim_buf_add_highlight(bufnr, -1, "CurlVariable", start_row, start_col, end_col)
+			vim.api.nvim_buf_add_highlight(bufnr, -1, "CurlVariable", start_row, start_col, end_col)
 		elseif name == "url" then
 			vim.api.nvim_buf_add_highlight(bufnr, -1, "CurlUrl", start_row, start_col, end_col)
 		end
