@@ -42,6 +42,8 @@ local function open_or_goto_curl_tab()
 		vim.cmd("botright split | wincmd j")
 	elseif open_with == "vsplit" then
 		vim.cmd("botright vsplit | wincmd l")
+	elseif open_with == "buffer" then
+		return
 	else
 		local tab_win_id = find_curl_tab_windid()
 		if tab_win_id ~= nil then
@@ -93,9 +95,13 @@ local open_result_buffer = function(called_from_win_id)
 		return
 	end
 
+	local config = require("curl.config")
+	local output_split_direction = config.get("output_split_direction")
+	local split_cmd = output_split_direction == "horizontal" and "belowright sb" or "vert belowright sb"
+
 	if buf_is_open(open_resbuf_name) then
 		local bufnr = vim.fn.bufnr(open_resbuf_name, false)
-		vim.cmd("vert belowright sb" .. bufnr .. " | wincmd p")
+		vim.cmd(split_cmd .. bufnr .. " | wincmd p")
 		OUTPUT_BUF_ID = bufnr
 		return
 	end
@@ -104,8 +110,24 @@ local open_result_buffer = function(called_from_win_id)
 	vim.api.nvim_buf_set_name(new_bufnr, open_resbuf_name)
 	vim.api.nvim_set_option_value("filetype", "json", { buf = new_bufnr })
 	vim.api.nvim_set_option_value("buftype", "nofile", { buf = new_bufnr })
-	vim.cmd("vert belowright sb" .. new_bufnr .. " | wincmd p")
+	vim.cmd(split_cmd .. new_bufnr .. " | wincmd p")
 	OUTPUT_BUF_ID = new_bufnr
+end
+
+---sets envs from parsed lines output
+---in style like `---var=val`
+---@param lines [string]
+---@param upper_bound integer | nil
+M.setup_buf_vars = function(lines, upper_bound)
+	upper_bound = upper_bound or #lines
+	for idx = 1, upper_bound do
+		local line = lines[idx]
+		if not line then break end
+		local k, v = line:match("^%s*%-%-%-%s*([^=]+)=(.*)")
+		if k and v then
+			vim.env[k] = v
+		end
+	end
 end
 
 M.setup_curl_tab_for_file = function(filename)

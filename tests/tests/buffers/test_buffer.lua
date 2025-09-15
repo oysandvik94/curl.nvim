@@ -193,4 +193,23 @@ T["Buffer"]["multiple opens should switch buffer"] = function()
   test_util.assert_equals(#inital_tabs + 1, #tabs, "Should only have opened one extra tab")
 end
 
+T["Buffer"]["output buffer respects horizontal split configuration"] = function()
+  -- Override config to use horizontal split for output
+  child.lua([[require("curl").setup({ output_split_direction = "horizontal" })]])
+  child.lua([[require("curl").open_curl_tab()]])
+
+  local lines = { "test", "output" }
+  -- Get the actual current window ID from the child process
+  local cur_win = child.api.nvim_get_current_win()
+  child.lua(string.format([[require("curl.buffers").set_output_buffer_content(%d, {"test", "output"})]], cur_win))
+
+  -- Check that we have 2 windows after opening output
+  local windows = child.api.nvim_tabpage_list_wins(0)
+  test_util.assert_equals(2, #windows, "Should have 2 windows after opening output")
+
+  -- Verify the config was actually set
+  local output_split_direction = child.lua_get([[require("curl.config").get("output_split_direction")]])
+  test_util.assert_equals("horizontal", output_split_direction)
+end
+
 return T

@@ -16,6 +16,10 @@ M.add_treesitter_highlighting = function()
 
       ;; Highlight URLs
       ((word) @url (#match? @url "^https?://"))
+
+      ;; Highlight variables
+      ;; FIXME: will have many false-positives but idk how to do "\v---.{-}\=.+$" 
+      ((command) @custom_var (#match? @custom_var "^---.+$"))
     ]]
 	)
 
@@ -32,6 +36,8 @@ M.add_treesitter_highlighting = function()
 			vim.api.nvim_buf_add_highlight(bufnr, -1, "CurlKeyword", start_row, start_col, end_col)
 		elseif name == "curl_option" or name == "http_method" then
 			vim.api.nvim_buf_add_highlight(bufnr, -1, "CurlFunction", start_row, start_col, end_col)
+		elseif name == "custom_var" then
+			vim.api.nvim_buf_add_highlight(bufnr, -1, "CurlVariable", start_row, start_col, end_col)
 		elseif name == "url" then
 			vim.api.nvim_buf_add_highlight(bufnr, -1, "CurlUrl", start_row, start_col, end_col)
 		end
@@ -43,6 +49,10 @@ M.add_treesitter_highlighting = function()
 
 	vim.api.nvim_set_hl(0, "CurlFunction", {
 		link = "@function",
+	})
+
+	vim.api.nvim_set_hl(0, "CurlVariable", {
+		link = "@variable",
 	})
 
 	vim.api.nvim_set_hl(0, "CurlKeyword", {

@@ -120,4 +120,22 @@ T["Config"]["can set alternative curl alias in runtime"] = function()
   child.fn.jobstart = mock_pre
 end
 
+T["Config"]["can set output split direction to horizontal"] = function()
+  -- Override the pre_case setup with our specific config
+  child.lua([[require("curl").setup({ output_split_direction = "horizontal" })]])
+
+  local output_split_direction = child.lua_get([[require("curl.config").get("output_split_direction")]])
+
+  test_util.assert_equals("horizontal", output_split_direction)
+end
+
+T["Config"]["default output split direction is vertical"] = function()
+  -- Override the pre_case setup with default config
+  child.lua([[require("curl").setup({})]])
+
+  local output_split_direction = child.lua_get([[require("curl.config").get("output_split_direction")]])
+
+  test_util.assert_equals("vertical", output_split_direction)
+end
+
 return T
