@@ -93,6 +93,25 @@ M.close_curl_tab = function(force)
 	buffers.close_curl_tab(force)
 end
 
+---replace custom variables in curl_command for windows
+---I have no idea why `vim.env` works on *nix and not for windows
+---@param curl_command string parsed curl_command from *.curl files
+---@return string replaced curl_command on windows OR origin curl_command on *nix
+M.replace_env_var = function (curl_command)
+  if vim.fn.has("win32") then
+    local pattern = "(%$%w+)"
+    local matches = string.gmatch(curl_command, pattern)
+    for m in matches do
+      local word = m:sub(2, #m)
+      local val = vim.env[word]
+      if val ~= nil then
+        curl_command = string.gsub(curl_command, m, val)
+      end
+    end
+  end
+  return curl_command
+end
+
 M.execute_curl = function()
 	local executed_from_win = vim.api.nvim_get_current_win()
 	local cursor_pos, lines = buffers.get_command_buffer_and_pos()
@@ -111,6 +130,8 @@ M.execute_curl = function()
 	local output = ""
 	local error = ""
 	buffers.setup_buf_vars(lines, cursor_pos)
+  -- after setting vim.env, replace curl_command for windows
+  curl_command = M.replace_env_var(curl_command)
 
 	local commands = shell.get_default_shell()
 	if commands ~= nil and type(commands) == "table" then
