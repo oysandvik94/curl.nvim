@@ -221,6 +221,38 @@ curl $baseurl/collections/$collection_name
 
 </details>
 
+If errors are encountered like bellow:
+
+```plaintext
+# curl file example
+
+---host=http://localhost
+---port=8081
+---app=fastapp
+curl -X GET $host:$port/$app/check-health
+
+# Error:
+curl: (3) URL rejected: Port number was not a decimal number between 0 and 65535
+```
+
+The reason is that os system fails to expand variables to url. 
+
+Since curl `8.3.0`, `--variable` and `--expand-url` are available. So another style is:
+
+<details>
+<summary>See example</summary>
+---baseurl=http://127.0.0.1:8000
+
+curl --variable '%baseurl' --expand-url {{baseurl}}/collections
+
+---collection_name=test
+curl
+--variable '%baseurl'
+--variable '%collection_name'
+--expand-url {{baseurl}}/collections/{{collection_name}}
+
+</details>
+
 ### 💪 Headers
 
 Basic auth and bearer tokens work, and can be retrieved from environment variables
