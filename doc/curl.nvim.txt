@@ -1,4 +1,4 @@
-*curl.nvim.txt*           For NVIM v0.8.0          Last change: 2025 August 07
+*curl.nvim.txt*          For NVIM v0.8.0         Last change: 2026 February 25
 
 ==============================================================================
 Table of Contents                                *curl.nvim-table-of-contents*
@@ -39,7 +39,7 @@ INSTALLATION AND REQUIREMENTS        *curl.nvim-installation-and-requirements*
 - jq <https://jqlang.github.io/jq/>,
 - Linux/Mac (I dont have a windows machine to test, feel free to create a PR)
 
-Installation example for Lazy <https://github.com/folke/lazy.nvim>
+Installation example for Lazy <https://github.com/folke/lazy.nvim>:
 
 >lua
     {
@@ -52,8 +52,9 @@ Installation example for Lazy <https://github.com/folke/lazy.nvim>
     }
 <
 
-Toget started quickly, check out some commands under to get you going. For more
-detailed documentation, see examples under Features <README#✨%20Features>!
+To get started quickly, check out some commands under to get you going. For
+more detailed documentation, see examples under Features
+<README#✨%20Features>!
 
 >vim
     " A buffer that is scoped to the current working directory
@@ -228,6 +229,34 @@ See example ~
     ---collection_name=test
     curl $baseurl/collections/$collection_name
 <
+
+If errors are encountered like bellow:
+
+>plaintext
+    # curl file example
+    
+    ---host=http://localhost
+    ---port=8081
+    ---app=fastapp
+    curl -X GET $host:$port/$app/check-health
+    
+    # Error:
+    curl: (3) URL rejected: Port number was not a decimal number between 0 and 65535
+<
+
+The reason is that os system fails to expand variables to url.
+
+Since curl `8.3.0`, `--variable` and `--expand-url` are available. So another
+style is:
+
+See example ~
+
+—baseurl=http://127.0.0.1:8000
+
+curl –variable '%baseurl' –expand-url {{baseurl}}/collections
+
+—collection_name=test curl –variable '%baseurl' –variable
+'%collection_name' –expand-url {{baseurl}}/collections/{{collection_name}}
 
 
 HEADERS ~
